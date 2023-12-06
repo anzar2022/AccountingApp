@@ -1,0 +1,35 @@
+﻿docker build -t test-api-image -f Dockerfile .
+
+docker run -d -p 8080:80 --name test-api-image account-api-image
+
+docker run --name test-api-image --network=accountapi_account-api-network test-api-image
+
+
+docker run test-api-image
+
+docker-compose build
+docker-compose up -d
+
+docker exec -it account-sql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Anzar@2022 -Q "SELECT @@SERVERNAME AS 'Server Name';"
+docker exec -it account-sql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Anzar@2022 -Q "SELECT DB_NAME() AS 'Database Name';"
+docker exec -it account-sql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Anzar@2022 -Q "CREATE DATABASE AccountingApp;"
+docker exec -it  account-sql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Anzar@2022 -Q "SELECT name FROM sys.databases;"
+
+docker exec -it account-sql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Sahil@2024 -Q "SELECT name FROM sys.sql_logins;"
+docker exec -it account-sql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Anzar@2022
+ALTER LOGIN sa WITH PASSWORD = 'Anzar@2022';
+
+docker exec -it account-sql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Sahil@2024 -Q "EXEC sp_configure 'remote access', 1; RECONFIGURE;"
+
+
+docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" account-sql-server
+
+docker exec -it account-sql-server /bin/bash
+
+/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P Sahil@2024
+
+docker network inspect accountapi_account-api-network
+
+docker run --name test-api-container --network=accountapi_account-api-network test-api-image
+
+docker network connect accountapi_account-api-network test-api-container

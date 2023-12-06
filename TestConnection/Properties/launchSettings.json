@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TestConnection": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
