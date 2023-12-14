@@ -44,9 +44,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AccountingAppDBContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("AccountApi"));
-    //options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-   // options.EnableSensitiveDataLogging();
+    options.UseSqlServer(connectionString, b => b.MigrationsAssembly("AccountApi"));
+  
 });
 
 
