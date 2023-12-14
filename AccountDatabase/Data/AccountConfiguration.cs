@@ -1,10 +1,14 @@
-﻿using AccountDatabase.Data;
-using AccountDatabase.Entities;
-using AccountDatabase.Repositories;
+﻿using AccountDatabase.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Principal;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace AccountApi.Data
+namespace AccountDatabase.Data
 {
     public class AccountConfiguration : IEntityTypeConfiguration<Account>
     {

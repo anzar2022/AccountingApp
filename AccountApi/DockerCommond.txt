@@ -1,11 +1,12 @@
 ﻿docker build -t test-api-image -f Dockerfile .
 
-docker run -d -p 8080:80 --name test-api-image account-api-image
+docker run -d -p 8070:70 --name test-api-image-web account-api-image-web
 
 docker run --name test-api-image --network=accountapi_account-api-network test-api-image
 
+docker build -t test-api-image-web -f Dockerfile.test .
 
-docker run test-api-image
+docker run test-api-image-web
 
 docker-compose build
 docker-compose up -d
@@ -33,3 +34,21 @@ docker network inspect accountapi_account-api-network
 docker run --name test-api-container --network=accountapi_account-api-network test-api-image
 
 docker network connect accountapi_account-api-network test-api-container
+
+
+/*********Import IMages**********/
+docker save -o D:\Project\DockerImage\accountingapp-testdocker-api.tar accountingapp-testdocker-api:latest
+
+docker save -o D:\Project\DockerImage\accountingapp-account-api.tar accountingapp-account-api:latest
+
+docker save -o D:\Project\DockerImage\mssql-server.tar mcr.microsoft.com/mssql/server:2019-latest
+/******************************/
+
+/*****************Load Images*************************/
+docker load -i D:\Project\DockerImage\accountingapp-testdocker-api.tar
+docker load -i D:\Project\DockerImage\accountingapp-account-api.tar
+docker load -i D:\Project\DockerImage\mssql-server.tar
+
+/*****************End Load Images*************************/
+
+

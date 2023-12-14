@@ -2,8 +2,9 @@ using AccountApi.Data;
 using AccountApi.Dtos;
 using AccountApi.Repositories;
 using AccountApi.Services;
-using AccountDBUtilities.Data;
-using AccountDBUtilities.Entities;
+using AccountDatabase.Data;
+using AccountDatabase.Entities;
+using AccountDatabase.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -13,21 +14,41 @@ var configuration = builder.Configuration;
 var defaultConnectionString = configuration.GetConnectionString("DefaultConnection");
 var dockerConnectionString = configuration.GetConnectionString("DockerConnection");
 
-Console.WriteLine(defaultConnectionString);
-Console.WriteLine(dockerConnectionString);
+//Console.WriteLine(defaultConnectionString);
+//Console.WriteLine(dockerConnectionString);
 
-var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == ""? "local" : Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"); 
+
 var connectionString = environment == "Production" ? dockerConnectionString : defaultConnectionString;
 
-Console.WriteLine(connectionString);
-Console.WriteLine(environment);
+Console.WriteLine("Connction string {0} :", connectionString);
+Console.WriteLine("environment {0} : ", environment);
+//Console.WriteLine(environment);
 
 
-
+//options.UseSqlServer(connection, b => b.MigrationsAssembly("AccountApi"))
 builder.Services.AddControllers();
 // Add services to the container.
-builder.Services.AddDbContext<AccountingAppDBContext>(options => options.UseSqlServer(connectionString));
+//builder.Services.AddDbContext<AccountingAppDBContext>(options => options.UseSqlServer(connectionString), b => b.MigrationsAssembly("AccountApi"));
 //builder.Services.AddDbContext<AccountingAppDBContext>();
+
+
+//builder.Services.AddDbContext<AccountingAppDBContext>(options =>
+//{
+//    options.UseSqlServer(builder.Configuration.GetConnectionString(defaultConnectionString), b => b.MigrationsAssembly("AccountApi"));
+
+//});
+
+
+//builder.Services.AddDbContext<AccountingAppDBContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddDbContext<AccountingAppDBContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("AccountApi"));
+    //options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+   // options.EnableSensitiveDataLogging();
+});
+
 
 
 //builder.Services.AddScoped<IAccountRepository, AccountRepository>();

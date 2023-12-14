@@ -1,6 +1,8 @@
 ﻿using AccountApi.Dtos;
 using AccountApi.Repositories;
-using AccountDBUtilities.Entities;
+using AccountDatabase.Data;
+using AccountDatabase.Entities;
+using AccountDatabase.Repositories;
 using AutoMapper;
 using System.Collections;
 
@@ -128,8 +130,9 @@ namespace AccountApi.Services
         {
             try
             {
+                var account = await _accountRepository.GetByIdAsync(Id);
 
-                // return await _accountRepository.DeleteAsync(Id);
+                 await _accountRepository.DeleteAsync(account);
                 return true;
             }
             catch (Exception)
