@@ -1,4 +1,6 @@
-﻿using AccountDBUtilities.Entities;
+﻿using AccountDatabase.Data;
+using AccountDatabase.Entities;
+using AccountDatabase.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

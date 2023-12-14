@@ -3,7 +3,8 @@
 services:
   account-api:
     build:
-      context: ../AccountApi
+      #context: ../AccountApi
+      context: .
       dockerfile: Dockerfile
     ports:
       - "8080:80"
@@ -13,6 +14,7 @@ services:
       - ./AccountApi:/app/AccountApi
     networks:
       - account-api-network
+
 
   sql-server-database:
     image: mcr.microsoft.com/mssql/server:2019-latest

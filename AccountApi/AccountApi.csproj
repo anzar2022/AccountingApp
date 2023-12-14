@@ -24,11 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AccountDBUtilities\AccountDBUtilities.csproj" />
+    <Folder Include="Entities\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\" />
+    <ProjectReference Include="..\AccountDatabase\AccountDatabase.csproj" />
   </ItemGroup>
 
 </Project>

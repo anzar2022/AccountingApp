@@ -1,7 +1,7 @@
 ﻿using AccountApi.Data;
-using AccountDBUtilities.Data;
-using AccountDBUtilities.Entities;
-using AccountDBUtilities.Repositories;
+using AccountDatabase.Data;
+using AccountDatabase.Entities;
+using AccountDatabase.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
