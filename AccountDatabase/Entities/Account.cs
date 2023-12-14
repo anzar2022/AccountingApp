@@ -23,7 +23,7 @@ namespace AccountDatabase.Entities
         public string AdharCard { get; set; } = string.Empty;
         public string Adderss { get; set; } = string.Empty;
 
-        public DateOnly CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; }
 
 
     }
