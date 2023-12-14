@@ -46,6 +46,15 @@ builder.Services.AddAutoMapper(config =>
    
 }, typeof(Program));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("EnableCORS", builder =>
+    {
+        builder.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 app.MapControllers();
@@ -70,7 +79,7 @@ app.MapGet("/weatherforecast", () =>
         .ToArray();
     return forecast;
 });
-
+app.UseCors("EnableCORS");
 app.Run();
 
 internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

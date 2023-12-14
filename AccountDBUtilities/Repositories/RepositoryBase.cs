@@ -28,6 +28,8 @@ namespace AccountDBUtilities.Repositories
             return entity;
         }
 
+     
+
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             //return await _billingAppContext.Set<T>().ToListAsync();

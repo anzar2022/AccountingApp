@@ -128,9 +128,10 @@ namespace AccountApi.Services
         {
             try
             {
-
-                // return await _accountRepository.DeleteAsync(Id);
+                var account = await _accountRepository.GetByIdAsync(Id);
+                await _accountRepository.DeleteAsync(account);
                 return true;
+               
             }
             catch (Exception)
             {

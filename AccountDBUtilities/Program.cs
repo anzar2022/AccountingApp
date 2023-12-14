@@ -13,11 +13,20 @@ var connectionString = environment == "Production" ? dockerConnectionString : de
 
 builder.Services.AddDbContext<AccountingAppDBContext>(options => options.UseSqlServer(connectionString));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("EnableCORS", builder =>
+    {
+        builder.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader();
+    });
+});
 
 
 
 var app = builder.Build();
 
 app.MapGet("/", () => "Hello World!");
-
+app.UseCors("EnableCORS");
 app.Run();
