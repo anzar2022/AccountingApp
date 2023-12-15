@@ -66,10 +66,19 @@ builder.Services.AddAutoMapper(config =>
    
 }, typeof(Program));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("EnableCORS", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 app.MapControllers();
-
+app.UseCors("EnableCORS");
 
 // Configure the HTTP request pipeline.
 
