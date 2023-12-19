@@ -78,7 +78,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 app.MapControllers();
-
+app.UseCors("EnableCORS");
 
 // Configure the HTTP request pipeline.
 
