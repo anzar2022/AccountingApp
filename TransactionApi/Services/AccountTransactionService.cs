@@ -49,7 +49,24 @@ namespace TransactionApi.Services
 
                 var accounts = await _accountTransactionRepository.GetByIdAsync(Id);
 
-                var accountDto = _mapper.Map<GetAccountTransactionDto>(accounts);
+                /// var accountDto = _mapper.Map<GetAccountTransactionDto>(accounts);
+
+                // Map the fetched data to the GetAccountTransactionDto record
+                GetAccountTransactionDto accountDto = new GetAccountTransactionDto(
+                    Id: accounts.Id,
+                    AccountId: accounts.AccountId,
+                    AccountName: "",
+                    PrincipalAmount: accounts.PrincipalAmount,
+                    PaidAmount: accounts.PaidAmount,
+                    BalanceAmount: accounts.BalanceAmount,
+                    CreatedDate: accounts.CreatedDate,
+                    UpdatedDate: accounts.UpdatedDate,
+                    CreatedUserId: accounts.CreatedUserId,
+                    UpdatedUserId: accounts.UpdatedUserId,
+                    StartDate: accounts.StartDate,
+                    CloseDate: accounts.CloseDate,
+                    InterestRate: accounts.InterestRate
+                );
 
                 return accountDto;
             }
