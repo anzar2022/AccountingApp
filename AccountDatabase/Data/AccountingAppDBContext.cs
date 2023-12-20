@@ -20,6 +20,8 @@ namespace AccountDatabase.Data
         public DbSet<Account> Accounts { get; set; }
         public DbSet<AccountTransaction> AccountTransactions { get; set; }
 
+        public DbSet<InterestMaster> InterestMasters { get; set; }
+
         public DbSet<Mobile> Mobiles { get; set; }
     }
 }
