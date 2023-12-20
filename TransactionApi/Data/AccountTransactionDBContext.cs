@@ -1,5 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TransactionApi.Entities;
+﻿using AccountDatabase.Entities;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace TransactionApi.Data
 {

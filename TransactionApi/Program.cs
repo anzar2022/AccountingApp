@@ -1,7 +1,9 @@
+using AccountDatabase.Data;
+using AccountDatabase.Entities;
 using Microsoft.EntityFrameworkCore;
+using TransactionApi.Clients;
 using TransactionApi.Data;
 using TransactionApi.Dtos;
-using TransactionApi.Entities;
 using TransactionApi.Repositories;
 using TransactionApi.Services;
 
@@ -18,7 +20,7 @@ var connectionString = environment == "Production" ? dockerConnectionString : de
 
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<AccountTransactionDBContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<AccountingAppDBContext>(options => options.UseSqlServer(connectionString));
 
 
 builder.Services.AddScoped<IAccountTransactionRepository, AccountTransactionRepository>();
@@ -33,6 +35,10 @@ builder.Services.AddAutoMapper(config =>
     config.CreateMap<AccountTransaction, CreateAccountTransactionDto>().ReverseMap();
     config.CreateMap<AccountTransaction, UpdateAccountTransactionDto>().ReverseMap();
   
+});
+
+builder.Services.AddHttpClient<AccountClient>(client => {
+    client.BaseAddress = new Uri("http://localhost:5289/"); // Replace "https://example.com" with your actual base URL
 });
 
 var app = builder.Build();
