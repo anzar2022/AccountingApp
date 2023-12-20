@@ -37,9 +37,23 @@ namespace TransactionApi.Services
             }
         }
 
-        public Task<bool> DeleteAccountTransactionAsync(Guid Id)
+        public async Task<bool> DeleteAccountTransactionAsync(Guid Id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var accounts = await _accountTransactionRepository.GetByIdAsync(Id);
+                await _accountTransactionRepository.DeleteAsync(accounts);
+
+                return true;
+            }
+            catch (Exception)
+            {
+              
+                throw;
+                return false;
+            }
+
+          
         }
 
         public async Task<GetAccountTransactionDto> GetAccountTransactionByIdAsync(Guid Id)
