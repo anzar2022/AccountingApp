@@ -6,6 +6,7 @@ using TransactionApi.Data;
 using TransactionApi.Dtos;
 using TransactionApi.Repositories;
 using TransactionApi.Services;
+using static TransactionApi.Dtos.InterestEMIDto;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,9 @@ builder.Services.AddDbContext<AccountingAppDBContext>(options => options.UseSqlS
 
 builder.Services.AddScoped<IAccountTransactionRepository, AccountTransactionRepository>();
 builder.Services.AddScoped<IAccountTransactionService, AccountTransactionService>();
+builder.Services.AddScoped<IInterestTransactionRepository, InterestTransactionRepository>();
+builder.Services.AddScoped<IInterestTransactionService, InterestTransactionService>();
+
 
 
 builder.Services.AddAutoMapper(typeof(Program));
@@ -34,6 +38,7 @@ builder.Services.AddAutoMapper(config =>
     config.CreateMap<AccountTransaction, GetAccountTransactionDto>().ReverseMap();
     config.CreateMap<AccountTransaction, CreateAccountTransactionDto>().ReverseMap();
     config.CreateMap<AccountTransaction, UpdateAccountTransactionDto>().ReverseMap();
+    config.CreateMap<InterestEMI, GetInterestEMIDto>().ReverseMap();
   
 });
 

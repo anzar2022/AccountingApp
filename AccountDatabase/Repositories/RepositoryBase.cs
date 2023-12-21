@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,6 +47,20 @@ namespace AccountDatabase.Repositories
             return entities;
         }
 
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter)
+        {
+            var entities = await _accountingAppDBContext.Set<T>()
+                                                        .Where(filter)
+                                                        .AsNoTracking()
+                                                        .ToListAsync();
+
+            foreach (var entity in entities)
+            {
+                _accountingAppDBContext.Entry(entity).State = EntityState.Detached;
+            }
+
+            return entities;
+        }
         public async Task<T> CreateAsync(T entity)
         {
             _accountingAppDBContext.Add(entity);

@@ -8,6 +8,7 @@ namespace TransactionApi.Services
         Task<bool> DeleteAccountTransactionAsync(Guid Id);
         Task<GetAccountTransactionDto> GetAccountTransactionByIdAsync(Guid Id);
         Task<IEnumerable<GetAccountTransactionDto>> GetAccountTransactionsAsync();
+        Task<List<GetAccountTransactionDto>> GetAccountTransactionByAccountIdAsync(Guid accountId);
         Task<UpdateAccountTransactionDto> UpdateAccountTransactionAsync(Guid Id, UpdateAccountTransactionDto account);
     }
 }

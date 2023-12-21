@@ -1,5 +1,6 @@
 ﻿using AccountDatabase.Entities;
 using AutoMapper;
+using System.Linq.Expressions;
 using TransactionApi.Clients;
 using TransactionApi.Dtos;
 using TransactionApi.Repositories;
@@ -33,6 +34,79 @@ namespace TransactionApi.Services
             catch (Exception)
             {
 
+                throw;
+            }
+        }
+
+        //public async Task<List<GetAccountTransactionDto>> GetAccountTransactionByAccountIdAsync(Guid accountId)
+        //{
+        //    try
+        //    {
+        //        Expression<Func<AccountTransaction, bool>> filter = transaction => transaction.AccountId == accountId;
+        //        var accountTransactionsByAccountId = await _accountTransactionRepository.GetAllAsync(filter);
+
+        //        return accountTransactionsByAccountId;
+        //    }
+        //    catch {
+        //        throw;
+        //    }
+        //}
+        public async Task<List<GetAccountTransactionDto>> GetAccountTransactionByAccountIdAsync(Guid accountId)
+        {
+            try
+            {
+                // Get data from accountClient and repository
+                var accounts = await accountClient.GetAccount();
+                Expression<Func<AccountTransaction, bool>> filter = transaction => transaction.AccountId == accountId;
+                var accountTransactionsByAccountId = await _accountTransactionRepository.GetAllAsync(filter);
+
+                // Mapping to update AccountName based on AccountId
+                var updatedAccountTransactions = accountTransactionsByAccountId.Select(entity =>
+                {
+                    var correspondingAccount = accounts.FirstOrDefault(acc => acc.Id == entity.AccountId);
+                    if (correspondingAccount != null)
+                    {
+                        return new GetAccountTransactionDto(
+                            entity.Id,
+                            entity.AccountId,
+                            correspondingAccount.AccountName, // Update AccountName from accounts
+                            entity.PrincipalAmount,
+                            entity.PaidAmount,
+                            entity.BalanceAmount,
+                            entity.CreatedDate,
+                            entity.UpdatedDate,
+                            entity.CreatedUserId,
+                            entity.UpdatedUserId,
+                            entity.StartDate,
+                            entity.CloseDate,
+                            entity.InterestRate
+                        );
+                    }
+                    else
+                    {
+                        // If no corresponding account found, return original entity with empty AccountName
+                        return new GetAccountTransactionDto(
+                            entity.Id,
+                            entity.AccountId,
+                            "",
+                            entity.PrincipalAmount,
+                            entity.PaidAmount,
+                            entity.BalanceAmount,
+                            entity.CreatedDate,
+                            entity.UpdatedDate,
+                            entity.CreatedUserId,
+                            entity.UpdatedUserId,
+                            entity.StartDate,
+                            entity.CloseDate,
+                            entity.InterestRate
+                        );
+                    }
+                });
+
+                return updatedAccountTransactions.ToList();
+            }
+            catch
+            {
                 throw;
             }
         }
