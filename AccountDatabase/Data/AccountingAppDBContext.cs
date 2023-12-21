@@ -22,6 +22,8 @@ namespace AccountDatabase.Data
 
         public DbSet<InterestMaster> InterestMasters { get; set; }
 
+        public DbSet<InterestEMI> InterestEMIs { get; set; }
+        
         public DbSet<Mobile> Mobiles { get; set; }
     }
 }

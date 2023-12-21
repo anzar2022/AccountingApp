@@ -97,7 +97,7 @@ namespace TransactionApi.Repositories
 
                 throw;
             }
-        }
+        } 
 
         public async Task<AccountTransaction> GetSingleAccountTransactionByFilterAsync(Expression<Func<AccountTransaction, bool>> filter)
         {
