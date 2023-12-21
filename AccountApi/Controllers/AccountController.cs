@@ -10,8 +10,8 @@ namespace AccountApi.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private ILogger<AccountController> _logger = null;
-        private IAccountService _accountService =  null;
+        private readonly ILogger<AccountController> _logger = null;
+        private readonly IAccountService _accountService =  null;
         public AccountController(ILogger<AccountController> logger, IAccountService accountService)
         {
             _logger = logger;

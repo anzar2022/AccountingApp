@@ -1,6 +1,7 @@
-﻿using AutoMapper;
+﻿using AccountDatabase.Entities;
+using AutoMapper;
+using TransactionApi.Clients;
 using TransactionApi.Dtos;
-using TransactionApi.Entities;
 using TransactionApi.Repositories;
 
 namespace TransactionApi.Services
@@ -10,10 +11,12 @@ namespace TransactionApi.Services
         private IAccountTransactionRepository  _accountTransactionRepository;
         private ILogger<AccountTransactionService> _logger;
         private IMapper _mapper;
-        public AccountTransactionService(IAccountTransactionRepository  accountTransactionRepository , ILogger<AccountTransactionService> logger, IMapper mapper) { 
+        private readonly AccountClient accountClient;
+        public AccountTransactionService(IAccountTransactionRepository  accountTransactionRepository , ILogger<AccountTransactionService> logger, IMapper mapper, AccountClient accountClient) { 
             _accountTransactionRepository = accountTransactionRepository;
             _logger = logger;
             _mapper = mapper;
+            this.accountClient = accountClient;
         }
         public async Task<CreateAccountTransactionDto> CreateAccountTransactionAsync(CreateAccountTransactionDto account)
         {
@@ -21,7 +24,7 @@ namespace TransactionApi.Services
             {
                 var createdAccount = _mapper.Map<AccountTransaction>(account);
 
-                var accounts = await _accountTransactionRepository.CreateAccountTransactionAsync(createdAccount);
+                var accounts = await _accountTransactionRepository.CreateAsync(createdAccount);
 
                 var createdAccountDto = _mapper.Map<CreateAccountTransactionDto>(accounts);
 
@@ -34,9 +37,23 @@ namespace TransactionApi.Services
             }
         }
 
-        public Task<bool> DeleteAccountTransactionAsync(Guid Id)
+        public async Task<bool> DeleteAccountTransactionAsync(Guid Id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var accounts = await _accountTransactionRepository.GetByIdAsync(Id);
+                await _accountTransactionRepository.DeleteAsync(accounts);
+
+                return true;
+            }
+            catch (Exception)
+            {
+              
+                throw;
+                return false;
+            }
+
+          
         }
 
         public async Task<GetAccountTransactionDto> GetAccountTransactionByIdAsync(Guid Id)
@@ -44,9 +61,26 @@ namespace TransactionApi.Services
             try
             {
 
-                var accounts = await _accountTransactionRepository.GetAccountTransactionByIdAsync(Id);
+                var accounts = await _accountTransactionRepository.GetByIdAsync(Id);
 
-                var accountDto = _mapper.Map<GetAccountTransactionDto>(accounts);
+                /// var accountDto = _mapper.Map<GetAccountTransactionDto>(accounts);
+
+                // Map the fetched data to the GetAccountTransactionDto record
+                GetAccountTransactionDto accountDto = new GetAccountTransactionDto(
+                    Id: accounts.Id,
+                    AccountId: accounts.AccountId,
+                    AccountName: "",
+                    PrincipalAmount: accounts.PrincipalAmount,
+                    PaidAmount: accounts.PaidAmount,
+                    BalanceAmount: accounts.BalanceAmount,
+                    CreatedDate: accounts.CreatedDate,
+                    UpdatedDate: accounts.UpdatedDate,
+                    CreatedUserId: accounts.CreatedUserId,
+                    UpdatedUserId: accounts.UpdatedUserId,
+                    StartDate: accounts.StartDate,
+                    CloseDate: accounts.CloseDate,
+                    InterestRate: accounts.InterestRate
+                );
 
                 return accountDto;
             }
@@ -57,16 +91,136 @@ namespace TransactionApi.Services
             }
         }
 
+        //public async Task<IEnumerable<GetAccountTransactionDto>> GetAccountTransactionsAsync()
+        //{
+        //    try
+        //    {
+        //        var accounts =  await   accountClient.GetAccount(); 
+
+        //        var accountEntities = await _accountTransactionRepository.GetAllAsync();
+
+        //        var accountDtos = _mapper.Map<IEnumerable<GetAccountTransactionDto>>(accountEntities);
+
+        //        foreach (var account in accounts)
+        //        {
+        //            var accountIdToUpdate = account.Id;
+        //            var accountToUpdate = accountDtos.FirstOrDefault(a => a.AccountId == accountIdToUpdate);
+        //            if (accountToUpdate != null)
+        //            {
+        //                // Update the AccountName for the specified accountId
+        //                accountToUpdate.AccountName = account.AccountName; // Assuming 'Name' is the property representing the account name
+        //            }
+        //        }
+
+        //            return accountDtos;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+        //public async Task<IEnumerable<GetAccountTransactionDto>> GetAccountTransactionsAsync()
+        //{
+        //    try
+        //    {
+        //        var accounts = await accountClient.GetAccount();
+
+        //        var accountEntities = await _accountTransactionRepository.GetAllAsync();
+
+        //        var config = new MapperConfiguration(cfg =>
+        //        {
+        //            cfg.CreateMap<GetAccountDto, GetAccountTransactionDto>()
+        //                .ForMember(dest => dest.AccountName, opt => opt.Ignore());
+        //        });
+
+        //        var mapper = config.CreateMapper();
+        //        var accountDtos = mapper.Map<IEnumerable<GetAccountTransactionDto>>(accountEntities);
+
+        //        foreach (var account in accounts)
+        //        {
+        //            var accountIdToUpdate = account.Id;
+        //            var accountToUpdate = accountDtos.FirstOrDefault(a => a.AccountId == accountIdToUpdate);
+        //            if (accountToUpdate != null)
+        //            {
+        //                accountToUpdate.AccountName = account.AccountName; // Update AccountName
+        //            }
+        //        }
+
+        //        return accountDtos;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+        //public async Task<IEnumerable<GetAccountTransactionDto>> GetAccountTransactionsAsync()
+        //{
+        //    try
+        //    {
+        //        var accounts = await accountClient.GetAccount();
+        //        var accountEntities = await _accountTransactionRepository.GetAllAsync();
+
+
+
+        //        return accountDtos;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
         public async Task<IEnumerable<GetAccountTransactionDto>> GetAccountTransactionsAsync()
         {
             try
             {
-                var accountEntities = await _accountTransactionRepository.GetAccountTransactionsAsync();
+                // Get data from accountClient and repository
+                var accounts = await accountClient.GetAccount();
+                var accountEntities = await _accountTransactionRepository.GetAllAsync();
 
-              
-                var accountDtos = _mapper.Map<IEnumerable<GetAccountTransactionDto>>(accountEntities);
+                // Mapping to update AccountName based on AccountId
+                var updatedAccountTransactions = accountEntities.Select(entity =>
+                {
+                    var correspondingAccount = accounts.FirstOrDefault(acc => acc.Id == entity.AccountId);
+                    if (correspondingAccount != null)
+                    {
+                        return new GetAccountTransactionDto(
+                            entity.Id,
+                            entity.AccountId,
+                            correspondingAccount.AccountName, // Update AccountName from accounts
+                            entity.PrincipalAmount,
+                            entity.PaidAmount,
+                            entity.BalanceAmount,
+                            entity.CreatedDate,
+                            entity.UpdatedDate,
+                            entity.CreatedUserId,
+                            entity.UpdatedUserId,
+                            entity.StartDate,
+                            entity.CloseDate,
+                            entity.InterestRate
+                        );
+                    }
+                    else
+                    {
+                        // If no corresponding account found, return original entity
+                        return new GetAccountTransactionDto(
+                            entity.Id,
+                            entity.AccountId,
+                           "",
+                            entity.PrincipalAmount,
+                            entity.PaidAmount,
+                            entity.BalanceAmount,
+                            entity.CreatedDate,
+                            entity.UpdatedDate,
+                            entity.CreatedUserId,
+                            entity.UpdatedUserId,
+                            entity.StartDate,
+                            entity.CloseDate,
+                            entity.InterestRate
+                        );
+                    }
+                });
 
-                return accountDtos;
+                return updatedAccountTransactions;
             }
             catch (Exception)
             {
@@ -74,11 +228,13 @@ namespace TransactionApi.Services
             }
         }
 
+
+
         public async Task<UpdateAccountTransactionDto> UpdateAccountTransactionAsync(Guid Id, UpdateAccountTransactionDto account)
         {
             try
             {
-                var existingAccount = await _accountTransactionRepository.GetAccountTransactionByIdAsync(Id);
+                var existingAccount = await _accountTransactionRepository.GetByIdAsync(Id);
 
                 if (existingAccount == null)
                 {
@@ -88,7 +244,7 @@ namespace TransactionApi.Services
                 _mapper.Map(account, existingAccount);
 
 
-                var accounts = await _accountTransactionRepository.UpdateAccountTransactionAsync(existingAccount);
+                var accounts = await _accountTransactionRepository.UpdateAsync(existingAccount);
 
                 var updatedAccountDto = _mapper.Map<UpdateAccountTransactionDto>(accounts);
 

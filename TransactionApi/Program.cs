@@ -1,7 +1,9 @@
+using AccountDatabase.Data;
+using AccountDatabase.Entities;
 using Microsoft.EntityFrameworkCore;
+using TransactionApi.Clients;
 using TransactionApi.Data;
 using TransactionApi.Dtos;
-using TransactionApi.Entities;
 using TransactionApi.Repositories;
 using TransactionApi.Services;
 
@@ -18,7 +20,7 @@ var connectionString = environment == "Production" ? dockerConnectionString : de
 
 
 builder.Services.AddControllers();
-builder.Services.AddDbContext<AccountTransactionDBContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<AccountingAppDBContext>(options => options.UseSqlServer(connectionString));
 
 
 builder.Services.AddScoped<IAccountTransactionRepository, AccountTransactionRepository>();
@@ -35,9 +37,23 @@ builder.Services.AddAutoMapper(config =>
   
 });
 
+builder.Services.AddHttpClient<AccountClient>(client => {
+    client.BaseAddress = new Uri("http://localhost:5289/"); // Replace "https://example.com" with your actual base URL
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("EnableCORS", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 app.MapControllers();
 app.MapGet("/", () => "Hello World!");
-
+app.UseCors("EnableCORS");
 app.Run();

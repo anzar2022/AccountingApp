@@ -10,8 +10,8 @@ namespace AccountApi.Services
 {
     public class AccountService : IAccountService
     {
-        private IAccountRepository _accountRepository;
-        private ILogger<AccountService> _logger;
+        private readonly IAccountRepository _accountRepository;
+        private readonly ILogger<AccountService> _logger;
         private readonly IMapper _mapper;
 
 
