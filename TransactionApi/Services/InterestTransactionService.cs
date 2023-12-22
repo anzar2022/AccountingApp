@@ -48,11 +48,10 @@ namespace TransactionApi.Services
         {
             try
             {
-                //Expression<Func<GetInterestEMIDto, bool>> filter = x => x.TransactionId == transactionId;
+            
 
-                //var interestTransaction = await _interestTransactionRepository.GetByIdAsync(filter);
-                var interestTransaction = await _interestTransactionRepository.GetByIdAsync(transactionId);
-
+     
+                var interestTransaction = await _interestTransactionRepository.GetInterestTransactionByTransactionId(transactionId);
 
                 var interestTransactionDto = _mapper.Map<GetInterestEMIDto>(interestTransaction);
 
@@ -118,12 +117,21 @@ namespace TransactionApi.Services
                     return existingInterestEMI;
                 }
                 double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount, transaction.InterestRate);
+                DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
+                string emiMonth = $"{DateOnly.FromDateTime(DateTime.Now):MMMM yyyy}";
+
+
                 var interestEMI = new InterestEMI
                 {
                     TransactionId = transaction.Id,
                     PrincipalAmount = transaction.PrincipalAmount,
                     InterestRate = transaction.InterestRate,
                     InterestAmount = interestAmount,
+                    BalanceInterestAmount = 0,
+                    PaidInterestAmount = 0,
+                    GeneratedDate = generatedDate,
+                    EmiMonth = emiMonth
+
 
                 };
                 var createdInterestEMI = await _interestTransactionRepository.CreateAsync(interestEMI);

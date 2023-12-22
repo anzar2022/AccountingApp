@@ -4,6 +4,7 @@ using AccountDatabase.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccountApi.Migrations
 {
     [DbContext(typeof(AccountingAppDBContext))]
-    partial class AccountingAppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231222063914_newColumnToInterestEMI")]
+    partial class newColumnToInterestEMI
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,10 +118,6 @@ namespace AccountApi.Migrations
 
                     b.Property<double>("BalanceInterestAmount")
                         .HasColumnType("float");
-
-                    b.Property<string>("EmiMonth")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateOnly>("GeneratedDate")
                         .HasColumnType("date");

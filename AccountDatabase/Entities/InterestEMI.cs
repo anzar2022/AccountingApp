@@ -22,11 +22,16 @@ namespace AccountDatabase.Entities
 
         public double PrincipalAmount { get; set; }
 
+        public DateOnly GeneratedDate { get; set; }
+
         public double InterestRate { get; set; }
-
-   
-
         public double InterestAmount { get; set; }
+        public double BalanceInterestAmount { get; set; }
+        public double PaidInterestAmount { get; set; }
+        //emi month
+
+        public string EmiMonth { get; set; } 
+
 
     }
 }

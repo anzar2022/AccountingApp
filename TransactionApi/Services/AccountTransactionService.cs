@@ -10,11 +10,13 @@ namespace TransactionApi.Services
     public class AccountTransactionService : IAccountTransactionService
     {
         private IAccountTransactionRepository  _accountTransactionRepository;
+        private IInterestTransactionRepository _interestTransactionRepository;
         private ILogger<AccountTransactionService> _logger;
         private IMapper _mapper;
         private readonly AccountClient accountClient;
-        public AccountTransactionService(IAccountTransactionRepository  accountTransactionRepository , ILogger<AccountTransactionService> logger, IMapper mapper, AccountClient accountClient) { 
+        public AccountTransactionService(IAccountTransactionRepository  accountTransactionRepository ,IInterestTransactionRepository interestTransactionRepository, ILogger<AccountTransactionService> logger, IMapper mapper, AccountClient accountClient) { 
             _accountTransactionRepository = accountTransactionRepository;
+            _interestTransactionRepository = interestTransactionRepository;
             _logger = logger;
             _mapper = mapper;
             this.accountClient = accountClient;
@@ -103,6 +105,9 @@ namespace TransactionApi.Services
                     }
                 });
 
+
+
+
                 return updatedAccountTransactions.ToList();
             }
             catch
@@ -110,6 +115,39 @@ namespace TransactionApi.Services
                 throw;
             }
         }
+
+        public async Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionWithInterestAsync(Guid accountId)
+        {
+            try
+            {
+                // Get data from repository
+                Expression<Func<AccountTransaction, bool>> filter = transaction => transaction.AccountId == accountId;
+                var accountTransactionsByAccountId = await _accountTransactionRepository.GetAllAsync(filter);
+
+                // Get interestEMIs data from repository
+                var interestEMIs = await _interestTransactionRepository.GetAllAsync();
+
+                // Join Transactions and InterestEMIs tables and project the result into the DTO
+                var updatedAccountTransactions =
+                    from transaction in accountTransactionsByAccountId
+                    join interestEMI in interestEMIs on transaction.Id equals interestEMI.TransactionId into joinedData
+                    from interestEMI in joinedData.DefaultIfEmpty()
+                    select new GetAccountTransactionWithIntDto(
+                        transaction.Id,
+                        transaction.InterestRate,
+                        transaction.PrincipalAmount,
+                        interestEMI != null ? interestEMI.InterestAmount : 0
+                    );
+
+                return updatedAccountTransactions.ToList();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+
 
         public async Task<bool> DeleteAccountTransactionAsync(Guid Id)
         {

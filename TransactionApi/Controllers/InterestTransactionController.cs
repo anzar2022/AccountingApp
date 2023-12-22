@@ -51,7 +51,7 @@ namespace TransactionApi.Controllers
         }
 
         //generateEmiByTransactionId
-        [HttpPost("GenerateInterestEMI/{transactionId}")]
+        [HttpGet("GenerateInterestEMI/{transactionId}")]
         public async Task<ActionResult> GetInterestTransactionByAccountIdAsync(Guid transactionId)
         {
             try

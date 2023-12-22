@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AccountApi\AccountApi.csproj" />
     <ProjectReference Include="..\AccountDatabase\AccountDatabase.csproj" />
   </ItemGroup>
 

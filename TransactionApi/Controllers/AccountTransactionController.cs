@@ -47,13 +47,12 @@ namespace TransactionApi.Controllers
             }
         }
 
-
         [HttpGet("GetTransactionsByAccountId/{accountId}")]
         public async Task<ActionResult> GetTransactionsByAccountIdAsync(Guid accountId)
         {
             try
             {
-                var accountTransactions = await _accountTransactionService.GetAccountTransactionByAccountIdAsync(accountId);
+                var accountTransactions = await _accountTransactionService.GetAccountTransactionWithInterestAsync(accountId);
                 return Ok(accountTransactions);
             }
             catch (Exception)
@@ -62,6 +61,22 @@ namespace TransactionApi.Controllers
                 throw;
             }
         }
+        //[HttpGet("GetTransactionsByAccountId/{accountId}")]
+        //public async Task<ActionResult> GetTransactionsByAccountIdAsync(Guid accountId)
+        //{
+        //    try
+        //    {
+        //        var accountTransactions = await _accountTransactionService.GetAccountTransactionByAccountIdAsync(accountId);
+        //        return Ok(accountTransactions);
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
+        
+
 
 
         [HttpPost]
