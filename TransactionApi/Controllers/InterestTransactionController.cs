@@ -32,7 +32,7 @@ namespace TransactionApi.Controllers
                 throw;
             }
         }
-        [HttpGet("GetByAccountId/{accountId}")]
+        [HttpGet("GetTransactionsByAccountId/{accountId}")]
         public async Task<ActionResult> GetInterestTransactionByAccountIdAsync(Guid accountId)
         {
             try
