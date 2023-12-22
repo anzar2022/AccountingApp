@@ -87,6 +87,11 @@ namespace TransactionApi.Services
                 {
                     return null;
                 }
+                var existingInterestEMI = await _interestTransactionRepository.GetByIdAsync(transactionId);
+                if (existingInterestEMI != null)
+                {
+                    return existingInterestEMI;
+                }
                 double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount, transaction.InterestRate);
                 var interestEMI = new InterestEMI
                 {
