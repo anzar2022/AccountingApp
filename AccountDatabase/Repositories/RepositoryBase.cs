@@ -33,7 +33,16 @@ namespace AccountDatabase.Repositories
             }
             return entity;
         }
-
+        public async Task<T> GetByIdAsync(Expression<Func<T, bool>> filter)
+        {
+            // return await _billingAppContext.FindAsync<T>(id);
+            var entity = await _accountingAppDBContext.FindAsync<T>(filter);
+            if (entity != null)
+            {
+                _accountingAppDBContext.Entry(entity).State = EntityState.Detached;
+            }
+            return entity;
+        }
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             //return await _billingAppContext.Set<T>().ToListAsync();

@@ -33,9 +33,25 @@ namespace TransactionApi.Controllers
                 throw;
             }
         }
-        
+
+        [HttpGet("GetInterestEMI/{transactionId}")]
+        public async Task<ActionResult> GetInterestTransactionByIdAsync(Guid transactionId)
+        {
+            try
+            {
+                var entity = await _interestTransactionService.GetInterestTransactionByIdAsync(transactionId);
+                return Ok(entity);
+            }
+            catch (Exception)
+            {
+
+
+                throw;
+            }
+        }
+
         //generateEmiByTransactionId
-        [HttpGet("GenerateInterestEMI/{transactionId}")]
+        [HttpPost("GenerateInterestEMI/{transactionId}")]
         public async Task<ActionResult> GetInterestTransactionByAccountIdAsync(Guid transactionId)
         {
             try

@@ -1,5 +1,7 @@
 ﻿using AccountDatabase.Entities;
 using AutoMapper;
+using Microsoft.Identity.Client;
+using System.Linq.Expressions;
 using TransactionApi.Dtos;
 using TransactionApi.Repositories;
 using static TransactionApi.Dtos.InterestEMIDto;
@@ -40,6 +42,29 @@ namespace TransactionApi.Services
             {
                 throw;
             }
+        }
+
+        public async Task<GetInterestEMIDto> GetInterestTransactionByIdAsync(Guid transactionId)
+        {
+            try
+            {
+                //Expression<Func<GetInterestEMIDto, bool>> filter = x => x.TransactionId == transactionId;
+
+                //var interestTransaction = await _interestTransactionRepository.GetByIdAsync(filter);
+                var interestTransaction = await _interestTransactionRepository.GetByIdAsync(transactionId);
+
+
+                var interestTransactionDto = _mapper.Map<GetInterestEMIDto>(interestTransaction);
+
+                return interestTransactionDto;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
         }
 
         public async Task<List<InterestEMI>> GetInterestTransactionByAccountIdAsync(Guid accountId)

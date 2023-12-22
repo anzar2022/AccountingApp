@@ -10,6 +10,7 @@ namespace AccountDatabase.Repositories
     public interface IRepositoryBase<T> : IDisposable where T : class
     {
         Task<T> GetByIdAsync(Guid id);
+        Task<T> GetByIdAsync(Expression<Func<T, bool>> filter);
         Task<IEnumerable<T>> GetAllAsync();
         //filter
         Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter);
