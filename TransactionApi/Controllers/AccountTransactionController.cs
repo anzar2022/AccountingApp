@@ -46,6 +46,24 @@ namespace TransactionApi.Controllers
                 throw;
             }
         }
+
+
+        [HttpGet("GetTransactionsByAccountId/{accountId}")]
+        public async Task<ActionResult> GetTransactionsByAccountIdAsync(Guid accountId)
+        {
+            try
+            {
+                var accountTransactions = await _accountTransactionService.GetAccountTransactionByAccountIdAsync(accountId);
+                return Ok(accountTransactions);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
         [HttpPost]
         public async Task<ActionResult> CreateAccountAsync(CreateAccountTransactionDto account)
         {

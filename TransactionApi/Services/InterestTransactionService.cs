@@ -51,18 +51,22 @@ namespace TransactionApi.Services
 
                 foreach (var transaction in accountTransactionsByAccountId)
                 {
-                    double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount, transaction.InterestRate);
-                    var interestEMI = new InterestEMI
+                    var existingInterestEMITransaction = await _interestTransactionRepository.GetByIdAsync(transaction.AccountId);
+                    if (existingInterestEMITransaction == null)
                     {
-                        TransactionId = transaction.Id,
-                        PrincipalAmount = transaction.PrincipalAmount,
-                        InterestRate = transaction.InterestRate,
-                        InterestAmount = interestAmount,
+                        double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount, transaction.InterestRate);
+                        var interestEMI = new InterestEMI
+                        {
+                            TransactionId = transaction.Id,
+                            PrincipalAmount = transaction.PrincipalAmount,
+                            InterestRate = transaction.InterestRate,
+                            InterestAmount = interestAmount,
 
-                    };
+                        };
 
-                    var createdInterestEMI = await _interestTransactionRepository.CreateAsync(interestEMI);
-                    createdInterestEMIs.Add(createdInterestEMI);
+                        var createdInterestEMI = await _interestTransactionRepository.CreateAsync(interestEMI);
+                        createdInterestEMIs.Add(createdInterestEMI);
+                    }
                 }
              
 
@@ -74,6 +78,35 @@ namespace TransactionApi.Services
                 throw;
             }
         }
+        public async Task<InterestEMI> GetInterestEMIByTransactionIdAsync(Guid transactionId)
+        {
+            try
+            {
+                var transaction = await _accountTransactionService.GetAccountTransactionByIdAsync(transactionId);
+                if (transaction == null)
+                {
+                    return null;
+                }
+                double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount, transaction.InterestRate);
+                var interestEMI = new InterestEMI
+                {
+                    TransactionId = transaction.Id,
+                    PrincipalAmount = transaction.PrincipalAmount,
+                    InterestRate = transaction.InterestRate,
+                    InterestAmount = interestAmount,
+
+                };
+                var createdInterestEMI = await _interestTransactionRepository.CreateAsync(interestEMI);
+
+                return createdInterestEMI;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
 
         private double CalculateMonthlyInterest(double principalAmount, double annualInterestRate)
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 using TransactionApi.Services;
 
 namespace TransactionApi.Controllers
@@ -32,15 +33,19 @@ namespace TransactionApi.Controllers
                 throw;
             }
         }
-        [HttpGet("GetTransactionsByAccountId/{accountId}")]
-        public async Task<ActionResult> GetInterestTransactionByAccountIdAsync(Guid accountId)
+        
+        //generateEmiByTransactionId
+        [HttpGet("GenerateInterestEMI/{transactionId}")]
+        public async Task<ActionResult> GetInterestTransactionByAccountIdAsync(Guid transactionId)
         {
             try
             {
+                
                 _logger.LogInformation($"{nameof(GetInterestTransactionByAccountIdAsync)}");
 
-                var interestTransactions = await _interestTransactionService.GetInterestTransactionByAccountIdAsync(accountId);
-              
+                var interestTransactions = await _interestTransactionService.GetInterestEMIByTransactionIdAsync(transactionId);
+
+
                 return Ok(interestTransactions);
             }
             catch (Exception)
