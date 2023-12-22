@@ -47,12 +47,12 @@ namespace TransactionApi.Controllers
             }
         }
 
-        [HttpGet("GetTransactionsByAccountId/{accountId}")]
-        public async Task<ActionResult> GetTransactionsByAccountIdAsync(Guid accountId)
+        [HttpGet("GetTransactionsByAccountId")]
+        public async Task<ActionResult> GetTransactionsByAccountIdAsync([FromBody] AccountTransactionRequestDto requestDto)
         {
             try
             {
-                var accountTransactions = await _accountTransactionService.GetAccountTransactionWithInterestAsync(accountId);
+                var accountTransactions = await _accountTransactionService.GetAccountTransactionWithInterestAsync(requestDto.accountId, requestDto.EmiMonth);
                 return Ok(accountTransactions);
             }
             catch (Exception)

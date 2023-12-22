@@ -134,6 +134,12 @@ namespace TransactionApi.Services
 
 
                 };
+                var existingCreatedInterestEMI = await _interestTransactionRepository.GetByIdAsync(interestEMI.TransactionId);
+                if (existingCreatedInterestEMI != null)
+                {
+                    // If the interestEMI already exists, return a message or handle it as per your requirement.
+                    return existingCreatedInterestEMI;
+                }
                 var createdInterestEMI = await _interestTransactionRepository.CreateAsync(interestEMI);
 
                 return createdInterestEMI;

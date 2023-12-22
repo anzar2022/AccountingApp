@@ -116,7 +116,41 @@ namespace TransactionApi.Services
             }
         }
 
-        public async Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionWithInterestAsync(Guid accountId)
+        //important
+        //public async Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionWithInterestAsync(Guid accountId)
+        //{
+        //    try
+        //    {
+        //        // Get data from repository
+        //        Expression<Func<AccountTransaction, bool>> filter = transaction => transaction.AccountId == accountId;
+        //        var accountTransactionsByAccountId = await _accountTransactionRepository.GetAllAsync(filter);
+
+        //        // Get interestEMIs data from repository
+        //        var interestEMIs = await _interestTransactionRepository.GetAllAsync();
+
+        //        // Join Transactions and InterestEMIs tables and project the result into the DTO
+        //        var updatedAccountTransactions =
+        //            from transaction in accountTransactionsByAccountId
+        //            join interestEMI in interestEMIs on transaction.Id equals interestEMI.TransactionId into joinedData
+        //            from interestEMI in joinedData.DefaultIfEmpty()
+        //            select new GetAccountTransactionWithIntDto(
+        //                transaction.Id,
+        //                transaction.InterestRate,
+        //                transaction.PrincipalAmount,
+        //                interestEMI != null ? interestEMI.InterestAmount : 0,
+        //                interestEMI != null ? interestEMI.EmiMonth : string.Empty
+
+        //            );
+
+        //        return updatedAccountTransactions.ToList();
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        public async Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionWithInterestAsync(Guid accountId, string emiMonth)
         {
             try
             {
@@ -125,6 +159,8 @@ namespace TransactionApi.Services
                 var accountTransactionsByAccountId = await _accountTransactionRepository.GetAllAsync(filter);
 
                 // Get interestEMIs data from repository
+                //you can get emis based on month
+                Expression<Func<InterestEMI, bool>> monthEMI = e => e.EmiMonth == emiMonth;
                 var interestEMIs = await _interestTransactionRepository.GetAllAsync();
 
                 // Join Transactions and InterestEMIs tables and project the result into the DTO
@@ -132,11 +168,14 @@ namespace TransactionApi.Services
                     from transaction in accountTransactionsByAccountId
                     join interestEMI in interestEMIs on transaction.Id equals interestEMI.TransactionId into joinedData
                     from interestEMI in joinedData.DefaultIfEmpty()
+                    //where (interestEMI == null && emiMonth == null) || (interestEMI != null && interestEMI.EmiMonth == emiMonth)
+                    //where interestEMI == null || interestEMI.EmiMonth == emiMonth
                     select new GetAccountTransactionWithIntDto(
                         transaction.Id,
                         transaction.InterestRate,
                         transaction.PrincipalAmount,
-                        interestEMI != null ? interestEMI.InterestAmount : 0
+                        interestEMI != null ? interestEMI.InterestAmount : 0,
+                        interestEMI != null ? interestEMI.EmiMonth : string.Empty
                     );
 
                 return updatedAccountTransactions.ToList();
@@ -146,6 +185,7 @@ namespace TransactionApi.Services
                 throw;
             }
         }
+
 
 
 
