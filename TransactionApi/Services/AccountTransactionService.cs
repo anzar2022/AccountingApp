@@ -161,7 +161,7 @@ namespace TransactionApi.Services
                 // Get interestEMIs data from repository
                 //you can get emis based on month
                 Expression<Func<InterestEMI, bool>> monthEMI = e => e.EmiMonth == emiMonth;
-                var interestEMIs = await _interestTransactionRepository.GetAllAsync();
+                var interestEMIs = await _interestTransactionRepository.GetAllAsync(monthEMI);
 
                 // Join Transactions and InterestEMIs tables and project the result into the DTO
                 var updatedAccountTransactions =

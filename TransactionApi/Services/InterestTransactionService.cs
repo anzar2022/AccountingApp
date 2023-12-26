@@ -111,10 +111,11 @@ namespace TransactionApi.Services
                 {
                     return null;
                 }
-                var existingInterestEMI = await _interestTransactionRepository.GetByIdAsync(transactionId);
-                if (existingInterestEMI != null)
+                //use repository method then
+                var existedInterestTransaction = await _interestTransactionRepository.GetInterestTransactionByTransactionId(transactionId);
+                if (existedInterestTransaction != null)
                 {
-                    return existingInterestEMI;
+                    return existedInterestTransaction;
                 }
                 double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount, transaction.InterestRate);
                 DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
@@ -134,12 +135,12 @@ namespace TransactionApi.Services
 
 
                 };
-                var existingCreatedInterestEMI = await _interestTransactionRepository.GetByIdAsync(interestEMI.TransactionId);
-                if (existingCreatedInterestEMI != null)
-                {
-                    // If the interestEMI already exists, return a message or handle it as per your requirement.
-                    return existingCreatedInterestEMI;
-                }
+                //var existingCreatedInterestEMI = await _interestTransactionRepository.GetByIdAsync(interestEMI.TransactionId);
+                //if (existingCreatedInterestEMI != null)
+                //{
+                //    // If the interestEMI already exists, return a message or handle it as per your requirement.
+                //    return existingCreatedInterestEMI;
+                //}
                 var createdInterestEMI = await _interestTransactionRepository.CreateAsync(interestEMI);
 
                 return createdInterestEMI;

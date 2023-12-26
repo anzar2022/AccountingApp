@@ -47,7 +47,7 @@ namespace TransactionApi.Controllers
             }
         }
 
-        [HttpGet("GetTransactionsByAccountId")]
+        [HttpPost("GetTransactionsByAccountId")]
         public async Task<ActionResult> GetTransactionsByAccountIdAsync([FromBody] AccountTransactionRequestDto requestDto)
         {
             try
