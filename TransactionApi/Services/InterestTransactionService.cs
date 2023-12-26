@@ -163,7 +163,7 @@ namespace TransactionApi.Services
                 double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount + balanceInterestAmount, transaction.InterestRate);
                 DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
 
-                if (generatedDate < transaction.CreatedDate)
+                if (generatedDate < transaction.StartDate)
                 {
                     return null;
                 }
