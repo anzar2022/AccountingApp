@@ -21,5 +21,11 @@ namespace TransactionApi.Repositories
             var transaction = await _accountingAppDBContext.InterestEMIs.FirstOrDefaultAsync(e => e.TransactionId == transactionId);
             return transaction;
         }
+
+        public async Task<InterestEMI> GetInterestTransactionByEMIMonthAsync(string emiMonth)
+        {
+            var transaction = await _accountingAppDBContext.InterestEMIs.FirstOrDefaultAsync(e => e.EmiMonth == emiMonth);
+            return transaction;
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
 using TransactionApi.Services;
+using static TransactionApi.Dtos.InterestEMIDto;
 
 namespace TransactionApi.Controllers
 {
@@ -51,15 +52,15 @@ namespace TransactionApi.Controllers
         }
 
         //generateEmiByTransactionId
-        [HttpGet("GenerateInterestEMI/{transactionId}")]
-        public async Task<ActionResult> GetInterestTransactionByAccountIdAsync(Guid transactionId)
+        [HttpPost("GenerateInterestEMI")]
+        public async Task<ActionResult> GetInterestTransactionByAccountIdAsync([FromBody] GenerateInterestEMIDto interestEmi)
         {
             try
             {
                 
                 _logger.LogInformation($"{nameof(GetInterestTransactionByAccountIdAsync)}");
 
-                var interestTransactions = await _interestTransactionService.GetInterestEMIByTransactionIdAsync(transactionId);
+                var interestTransactions = await _interestTransactionService.GetInterestEMIByTransactionIdAsync(interestEmi);
 
 
                 return Ok(interestTransactions);

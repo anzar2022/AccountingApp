@@ -1,5 +1,6 @@
 ﻿using AccountDatabase.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 using System.Linq.Expressions;
 using TransactionApi.Dtos;
@@ -102,24 +103,24 @@ namespace TransactionApi.Services
                 throw;
             }
         }
-        public async Task<InterestEMI> GetInterestEMIByTransactionIdAsync(Guid transactionId)
+        public async Task<InterestEMI> GetInterestEMIByTransactionIdAsync([FromBody] GenerateInterestEMIDto interestEmi)
         {
             try
             {
-                var transaction = await _accountTransactionService.GetAccountTransactionByIdAsync(transactionId);
+                var transaction = await _accountTransactionService.GetAccountTransactionByIdAsync(interestEmi.TransactionId);
                 if (transaction == null)
                 {
                     return null;
                 }
-                //use repository method then
-                var existedInterestTransaction = await _interestTransactionRepository.GetInterestTransactionByTransactionId(transactionId);
+                //change validation method based on emiMonth
+                var existedInterestTransaction = await _interestTransactionRepository.GetInterestTransactionByEMIMonthAsync(interestEmi.EmiMonth);
                 if (existedInterestTransaction != null)
                 {
                     return existedInterestTransaction;
                 }
                 double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount, transaction.InterestRate);
                 DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
-                string emiMonth = $"{DateOnly.FromDateTime(DateTime.Now):MMMM yyyy}";
+                //string emiMonth = $"{DateOnly.FromDateTime(DateTime.Now):MMMM yyyy}";
 
 
                 var interestEMI = new InterestEMI
@@ -128,10 +129,10 @@ namespace TransactionApi.Services
                     PrincipalAmount = transaction.PrincipalAmount,
                     InterestRate = transaction.InterestRate,
                     InterestAmount = interestAmount,
-                    BalanceInterestAmount = 0,
+                    BalanceInterestAmount = interestAmount,
                     PaidInterestAmount = 0,
                     GeneratedDate = generatedDate,
-                    EmiMonth = emiMonth
+                    EmiMonth = interestEmi.EmiMonth
 
 
                 };
