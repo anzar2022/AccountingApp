@@ -162,9 +162,9 @@ namespace TransactionApi.Services
 
      
                 double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount + balanceInterestAmount, transaction.InterestRate);
-                //DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
-                DateOnly parsedDate = DateOnly.ParseExact(interestEmi.EmiMonth, "MM", CultureInfo.InvariantCulture);
-                DateOnly generatedDate = new DateOnly(parsedDate.Year, parsedDate.Month, 1);
+                DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
+                //DateOnly parsedDate = DateOnly.ParseExact(interestEmi.EmiMonth, "MM", CultureInfo.InvariantCulture);
+                //DateOnly generatedDate = new DateOnly(parsedDate.Year, parsedDate.Month, 1);
 
 
 
