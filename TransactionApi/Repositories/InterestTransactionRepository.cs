@@ -22,9 +22,9 @@ namespace TransactionApi.Repositories
             return transaction;
         }
 
-        public async Task<InterestEMI> GetInterestTransactionByEMIMonthAsync(string emiMonth)
+        public async Task<InterestEMI> GetInterestTransactionByEMIMonthAsync(double principalAmount)
         {
-            var transaction = await _accountingAppDBContext.InterestEMIs.FirstOrDefaultAsync(e => e.EmiMonth == emiMonth);
+            var transaction = await _accountingAppDBContext.InterestEMIs.FirstOrDefaultAsync(e => e.PrincipalAmount == principalAmount);
             return transaction;
         }
     }

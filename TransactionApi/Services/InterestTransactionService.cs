@@ -108,12 +108,13 @@ namespace TransactionApi.Services
             try
             {
                 var transaction = await _accountTransactionService.GetAccountTransactionByIdAsync(interestEmi.TransactionId);
+               
                 if (transaction == null)
                 {
                     return null;
                 }
                 //change validation method based on emiMonth
-                var existedInterestTransaction = await _interestTransactionRepository.GetInterestTransactionByEMIMonthAsync(interestEmi.EmiMonth);
+                var existedInterestTransaction = await _interestTransactionRepository.GetInterestTransactionByEMIMonthAsync(transaction.PrincipalAmount);
                 if (existedInterestTransaction != null)
                 {
                     return existedInterestTransaction;
