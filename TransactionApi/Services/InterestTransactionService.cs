@@ -113,11 +113,18 @@ namespace TransactionApi.Services
                 {
                     return null;
                 }
+
+                //var existedInterestTransactions = await _interestTransactionRepository.GetInterestTransactionByTransactionId(transaction.Id);
+                //double balanceInterestAmount = 0;
+                //if (existedInterestTransactions != null) {
+                //    balanceInterestAmount = existedInterestTransactions.Sum(e => e.BalanceInterestAmount);
+                //}
+
                 //change validation method based on emiMonth
-                var existedInterestTransaction = await _interestTransactionRepository.GetInterestTransactionByPrincipalAmountAsync(transaction.PrincipalAmount);
-                if (existedInterestTransaction != null)
+                var transactionMonth = await _interestTransactionRepository.GetInterestTransactionByPrincipalAmountAsync(transaction.PrincipalAmount);
+                if (transactionMonth != null)
                 {
-                    return existedInterestTransaction;
+                    return transactionMonth;
                 }
 
      
@@ -153,6 +160,8 @@ namespace TransactionApi.Services
                 throw;
             }
         }
+
+
 
         public async Task<InterestEMI> UpdateInterestTransactionPaymentAsync(UpdateInterestEMIDto updateDto)
         {
