@@ -52,8 +52,17 @@ namespace TransactionApi.Controllers
         {
             try
             {
-                var accountTransactions = await _accountTransactionService.GetAccountTransactionWithInterestAsync(requestDto.accountId, requestDto.EmiMonth);
-                return Ok(accountTransactions);
+                if (string.IsNullOrEmpty(requestDto.EmiMonth))
+                {
+                    var accountTransactions = await _accountTransactionService.GetAccountTransactionByAccountIdAsync(requestDto.accountId);
+                    return Ok(accountTransactions);
+                }
+                else
+                {
+                    var accountTransactions = await _accountTransactionService.GetAccountTransactionWithInterestAsync(requestDto.accountId, requestDto.EmiMonth);
+                    return Ok(accountTransactions);
+                }
+               
             }
             catch (Exception)
             {

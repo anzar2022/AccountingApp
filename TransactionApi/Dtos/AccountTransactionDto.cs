@@ -17,5 +17,5 @@ namespace TransactionApi.Dtos
     //public record GetAccountTransactionWithIntDto(Guid Id, Guid AccountId, string AccountName, double PrincipalAmount,  double InterestRate, double InterestAmount);
     public record GetAccountTransactionWithIntDto(Guid Id, double InterestRate, double PrincipalAmount, double InterestAmount,  string EmiMonth);
 
-    public record AccountTransactionRequestDto(Guid accountId, string EmiMonth);
+    public record AccountTransactionRequestDto(Guid accountId, string? EmiMonth);
 }
