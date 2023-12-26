@@ -158,8 +158,8 @@ namespace TransactionApi.Services
         {
             try
             {
-                var interestEMI = await _interestTransactionRepository.GetByIdAsync(updateDto.TransactionId);
-
+                var interestEMI = await _interestTransactionRepository.GetInterestTransactionByTransactionId(updateDto.TransactionId);
+                //check
                 if (interestEMI == null)
                 {
                     // Handle the case where the interest transaction with the specified Id is not found.
