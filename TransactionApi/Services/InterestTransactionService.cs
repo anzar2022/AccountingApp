@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using System.Globalization;
 using System.Linq.Expressions;
 using TransactionApi.Dtos;
 using TransactionApi.Repositories;
@@ -161,7 +162,11 @@ namespace TransactionApi.Services
 
      
                 double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount + balanceInterestAmount, transaction.InterestRate);
-                DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
+                //DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
+                DateOnly parsedDate = DateOnly.ParseExact(interestEmi.EmiMonth, "MM", CultureInfo.InvariantCulture);
+                DateOnly generatedDate = new DateOnly(parsedDate.Year, parsedDate.Month, 1);
+
+
 
                 if (generatedDate < transaction.StartDate)
                 {
@@ -238,7 +243,7 @@ namespace TransactionApi.Services
 
             // Calculate interest using the formula: Interest = Principal * Rate * Time
             double interestAmount = principalAmount * monthlyInterestRate * numberOfMonths;
-
+            interestAmount = Math.Round(interestAmount, 2);
             return interestAmount;
         }
 
