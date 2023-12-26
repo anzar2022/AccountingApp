@@ -120,9 +120,7 @@ namespace TransactionApi.Services
                 }
                 double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount, transaction.InterestRate);
                 DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
-                //string emiMonth = $"{DateOnly.FromDateTime(DateTime.Now):MMMM yyyy}";
-
-
+ 
                 var interestEMI = new InterestEMI
                 {
                     TransactionId = transaction.Id,
@@ -136,12 +134,7 @@ namespace TransactionApi.Services
 
 
                 };
-                //var existingCreatedInterestEMI = await _interestTransactionRepository.GetByIdAsync(interestEMI.TransactionId);
-                //if (existingCreatedInterestEMI != null)
-                //{
-                //    // If the interestEMI already exists, return a message or handle it as per your requirement.
-                //    return existingCreatedInterestEMI;
-                //}
+             
                 var createdInterestEMI = await _interestTransactionRepository.CreateAsync(interestEMI);
 
                 return createdInterestEMI;
@@ -152,6 +145,38 @@ namespace TransactionApi.Services
                 throw;
             }
         }
+
+        public async Task<InterestEMI> UpdateInterestTransactionPaymentAsync(UpdateInterestEMIDto updateDto)
+        {
+            try
+            {
+                var interestEMI = await _interestTransactionRepository.GetByIdAsync(updateDto.TransactionId);
+
+                if (interestEMI == null)
+                {
+                    // Handle the case where the interest transaction with the specified Id is not found.
+                    return null;
+                }
+
+                // Update the paid interest amount and subtract from the balance interest amount.
+                interestEMI.PaidInterestAmount += updateDto.PaidInterestAmount;
+                interestEMI.BalanceInterestAmount -= updateDto.PaidInterestAmount;
+
+                // Update other fields if needed.
+
+                // Use your existing update method to save changes to the database.
+                await _interestTransactionRepository.UpdateAsync(interestEMI);
+
+                return interestEMI;
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception here, you can log it or perform any other error handling.
+                // You can also throw a custom exception if needed.
+                throw new ApplicationException("An error occurred while updating the interest transaction payment.", ex);
+            }
+        }
+
 
 
         private double CalculateMonthlyInterest(double principalAmount, double annualInterestRate)

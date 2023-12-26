@@ -73,6 +73,26 @@ namespace TransactionApi.Controllers
         }
 
 
+            [HttpPost("PayInterestAmount")]
+            public async Task<ActionResult> PayInterestTransactionAsync([FromBody] UpdateInterestEMIDto interestEmi)
+            {
+                try
+                {
+
+                    _logger.LogInformation($"{nameof(GetInterestTransactionByAccountIdAsync)}");
+
+                    var interestTransactions = await _interestTransactionService.UpdateInterestTransactionPaymentAsync(interestEmi);
+
+
+                    return Ok(interestTransactions);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+
 
     }
 }
