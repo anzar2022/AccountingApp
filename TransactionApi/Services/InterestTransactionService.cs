@@ -202,7 +202,7 @@ namespace TransactionApi.Services
         {
             try
             {
-                var interestEMI = await _interestTransactionRepository.GetInterestTransactionByTransactionId(updateDto.TransactionId);
+                var interestEMI = await _interestTransactionRepository.GetByIdAsync(updateDto.Id);
                 //check
                 if (interestEMI == null)
                 {
