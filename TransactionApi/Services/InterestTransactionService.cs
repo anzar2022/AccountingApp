@@ -113,22 +113,24 @@ namespace TransactionApi.Services
                 {
                     return null;
                 }
+                var existedInterestTransactions = await _interestTransactionRepository.GetAllAsync();
 
                 //var existedInterestTransactions = await _interestTransactionRepository.GetInterestTransactionByTransactionId(transaction.Id);
-                //double balanceInterestAmount = 0;
-                //if (existedInterestTransactions != null) {
-                //    balanceInterestAmount = existedInterestTransactions.Sum(e => e.BalanceInterestAmount);
-                //}
-
-                //change validation method based on emiMonth
-                var transactionMonth = await _interestTransactionRepository.GetInterestTransactionByPrincipalAmountAsync(transaction.PrincipalAmount);
-                if (transactionMonth != null)
+                double balanceInterestAmount = 0;
+                if (existedInterestTransactions != null)
                 {
-                    return transactionMonth;
+                    balanceInterestAmount = existedInterestTransactions.Sum(e => e.BalanceInterestAmount);
                 }
 
+                //change validation method based on emiMonth
+                //var transactionMonth = await _interestTransactionRepository.GetInterestTransactionByPrincipalAmountAsync(transaction.PrincipalAmount);
+                //if (transactionMonth != null)
+                //{
+                //    return transactionMonth;
+                //}
+
      
-                double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount, transaction.InterestRate);
+                double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount + balanceInterestAmount, transaction.InterestRate);
                 DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
 
                 if (generatedDate < transaction.CreatedDate)
