@@ -51,6 +51,25 @@ namespace TransactionApi.Controllers
             }
         }
 
+
+        [HttpGet("GetInterestEMIs/{transactionId}")]
+        public async Task<ActionResult> GetInterestTransactionsByIdAsync(Guid transactionId)
+        {
+            try
+            {
+                var entity = await _interestTransactionService.GetInterestTransactionsByIdAsync(transactionId);
+                return Ok(entity);
+            }
+            catch (Exception)
+            {
+
+
+                throw;
+            }
+        }
+
+
+
         //generateEmiByTransactionId
         [HttpPost("GenerateInterestEMI")]
         public async Task<ActionResult> GetInterestTransactionByAccountIdAsync([FromBody] GenerateInterestEMIDto interestEmi)

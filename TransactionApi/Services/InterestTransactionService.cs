@@ -67,6 +67,36 @@ namespace TransactionApi.Services
 
         }
 
+        public async Task<IEnumerable<GetInterestEMIDto>> GetInterestTransactionsByIdAsync(Guid transactionId)
+        {
+            try
+            {
+                Expression<Func<InterestEMI, bool>> filterExpression = x => x.TransactionId == transactionId;
+
+                // Use the GetAllAsync method with the defined filter expression
+                var interestTransactions = await _interestTransactionRepository.GetAllAsync(filterExpression);
+
+                // Map the entities to DTOs
+                var interestTransactionDtos = _mapper.Map<IEnumerable<GetInterestEMIDto>>(interestTransactions);
+
+                return interestTransactionDtos;
+
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+
+
+
+
+
         public async Task<List<InterestEMI>> GetInterestTransactionByAccountIdAsync(Guid accountId)
         {
             try
