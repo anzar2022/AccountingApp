@@ -114,13 +114,20 @@ namespace TransactionApi.Services
                     return null;
                 }
                 //change validation method based on emiMonth
-                var existedInterestTransaction = await _interestTransactionRepository.GetInterestTransactionByEMIMonthAsync(transaction.PrincipalAmount);
+                var existedInterestTransaction = await _interestTransactionRepository.GetInterestTransactionByPrincipalAmountAsync(transaction.PrincipalAmount);
                 if (existedInterestTransaction != null)
                 {
                     return existedInterestTransaction;
                 }
+
+     
                 double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount, transaction.InterestRate);
                 DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
+
+                if (generatedDate < transaction.CreatedDate)
+                {
+                    return null;
+                }
  
                 var interestEMI = new InterestEMI
                 {

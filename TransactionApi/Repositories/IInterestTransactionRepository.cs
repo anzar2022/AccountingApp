@@ -7,6 +7,6 @@ namespace TransactionApi.Repositories
     public interface IInterestTransactionRepository : IRepositoryBase<InterestEMI>
     {
         Task<InterestEMI> GetInterestTransactionByTransactionId(Guid transactionId);
-        Task<InterestEMI> GetInterestTransactionByEMIMonthAsync(double principalAmount);
+        Task<InterestEMI> GetInterestTransactionByPrincipalAmountAsync(double principalAmount);
     }
 }
