@@ -146,19 +146,11 @@ namespace TransactionApi.Services
                 }
                 var existedInterestTransactions = await _interestTransactionRepository.GetAllAsync();
 
-                //var existedInterestTransactions = await _interestTransactionRepository.GetInterestTransactionByTransactionId(transaction.Id);
                 double balanceInterestAmount = 0;
                 if (existedInterestTransactions != null)
                 {
                     balanceInterestAmount = existedInterestTransactions.Sum(e => e.BalanceInterestAmount);
                 }
-
-                //change validation method based on emiMonth
-                //var transactionMonth = await _interestTransactionRepository.GetInterestTransactionByPrincipalAmountAsync(transaction.PrincipalAmount);
-                //if (transactionMonth != null)
-                //{
-                //    return transactionMonth;
-                //}
 
      
                 double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount + balanceInterestAmount, transaction.InterestRate);
@@ -212,7 +204,9 @@ namespace TransactionApi.Services
 
                 // Update the paid interest amount and subtract from the balance interest amount.
                 interestEMI.PaidInterestAmount += updateDto.PaidInterestAmount;
-                interestEMI.BalanceInterestAmount -= updateDto.PaidInterestAmount;
+                //round it here to 2 decimal 
+                interestEMI.BalanceInterestAmount = Math.Round(interestEMI.BalanceInterestAmount - updateDto.PaidInterestAmount, 2);
+                //interestEMI.BalanceInterestAmount -= updateDto.PaidInterestAmount;
 
                 // Update other fields if needed.
 
