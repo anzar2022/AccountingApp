@@ -28,7 +28,7 @@ builder.Services.AddScoped<IAccountTransactionRepository, AccountTransactionRepo
 builder.Services.AddScoped<IAccountTransactionService, AccountTransactionService>();
 builder.Services.AddScoped<IInterestTransactionRepository, InterestTransactionRepository>();
 builder.Services.AddScoped<IInterestTransactionService, InterestTransactionService>();
-
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 
 builder.Services.AddAutoMapper(typeof(Program));
