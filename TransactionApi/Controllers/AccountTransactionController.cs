@@ -70,6 +70,23 @@ namespace TransactionApi.Controllers
                 throw;
             }
         }
+
+        [HttpPost("GetTransactionsForAllAccounts")]
+        public async Task<ActionResult> GetAccountTransactionsWithInterestAsync([FromBody] TransactionsRequestDto requestDto)
+        {
+            try
+            {
+                    var accountTransactions = await _accountTransactionService.GetAccountTransactionsWithInterestAsync(requestDto.EmiMonth);
+                    return Ok(accountTransactions);
+            
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
         //[HttpGet("GetTransactionsByAccountId/{accountId}")]
         //public async Task<ActionResult> GetTransactionsByAccountIdAsync(Guid accountId)
         //{
@@ -84,7 +101,7 @@ namespace TransactionApi.Controllers
         //        throw;
         //    }
         //}
-        
+
 
 
 

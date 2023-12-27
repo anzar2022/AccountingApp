@@ -11,6 +11,7 @@ namespace TransactionApi.Services
         Task<List<GetAccountTransactionDto>> GetAccountTransactionByAccountIdAsync(Guid accountId);
 
         Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionWithInterestAsync(Guid accountId, string emiMonth);
+        Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionsWithInterestAsync(string emiMonth);
         Task<UpdateAccountTransactionDto> UpdateAccountTransactionAsync(Guid Id, UpdateAccountTransactionDto account);
     }
 }

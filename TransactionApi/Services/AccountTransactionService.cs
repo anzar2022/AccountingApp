@@ -154,10 +154,11 @@ namespace TransactionApi.Services
         {
             try
             {
+              
                 // Get data from repository
                 Expression<Func<AccountTransaction, bool>> filter = transaction => transaction.AccountId == accountId;
                 var accountTransactionsByAccountId = await _accountTransactionRepository.GetAllAsync(filter);
-
+                
                 // Get interestEMIs data from repository
                 //you can get emis based on month
                 Expression<Func<InterestEMI, bool>> monthEMI = e => e.EmiMonth == emiMonth;
@@ -187,6 +188,42 @@ namespace TransactionApi.Services
                 throw;
             }
         }
+        public async Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionsWithInterestAsync(string emiMonth)
+        {
+            try
+            {
+                // Get data from repository
+                var accountTransactionsByAccountId = await _accountTransactionRepository.GetAllAsync();
+
+                // Get interestEMIs data from repository
+                // you can get emis based on month
+                Expression<Func<InterestEMI, bool>> monthEMI = e => e.EmiMonth == emiMonth;
+                var interestEMIs = await _interestTransactionRepository.GetAllAsync(monthEMI);
+
+                var updatedAccountTransactions = new List<GetAccountTransactionWithIntDto>();
+
+                foreach (var transaction in accountTransactionsByAccountId)
+                {
+                    // Join Transactions and InterestEMIs tables and project the result into the DTO
+                    var matchingInterestEMI = interestEMIs.FirstOrDefault(e => e.TransactionId == transaction.Id);
+
+                    updatedAccountTransactions.Add(new GetAccountTransactionWithIntDto(
+                        transaction.Id,
+                        transaction.InterestRate,
+                        transaction.PrincipalAmount,
+                        matchingInterestEMI != null ? matchingInterestEMI.InterestAmount : 0,
+                        matchingInterestEMI != null ? matchingInterestEMI.EmiMonth : string.Empty
+                    ));
+                }
+
+                return updatedAccountTransactions;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
 
 
 
