@@ -13,13 +13,15 @@ namespace TransactionApi.Services
     public class InterestTransactionService : IInterestTransactionService
     {
         private IInterestTransactionRepository _interestTransactionRepository;
+        private IAccountTransactionRepository _accountTransactionRepository;
         private IAccountTransactionService _accountTransactionService;
         private ILogger<InterestEMI> _logger;
         private readonly IMapper _mapper;
-        public InterestTransactionService(IInterestTransactionRepository interestTransactionRepository, IAccountTransactionService accountTransactionService ,ILogger<InterestEMI> logger, IMapper mapper)
+        public InterestTransactionService(IInterestTransactionRepository interestTransactionRepository, IAccountTransactionService accountTransactionService , IAccountTransactionRepository accountTransactionRepository,ILogger<InterestEMI> logger, IMapper mapper)
         {
             _interestTransactionRepository = interestTransactionRepository;
             _accountTransactionService = accountTransactionService;
+            _accountTransactionRepository = accountTransactionRepository;
             _logger = logger;
             _mapper = mapper;
         }
@@ -188,6 +190,57 @@ namespace TransactionApi.Services
             }
         }
 
+        public async Task<List<InterestEMI>> GetInterestEMIForTransactionsAsync(string emiMonth)
+        {
+            var interestEMIs = new List<InterestEMI>();
+
+            try
+            {
+                
+                var transactions = await _accountTransactionRepository.GetAllAsync();
+
+                if (transactions == null)
+                {
+                    return null;
+                }
+                foreach (var transaction in transactions)
+                {
+                    var existedInterestTransactions = await _interestTransactionRepository.GetAllAsync();
+                    double balanceInterestAmount = existedInterestTransactions?.Sum(e => e.BalanceInterestAmount) ?? 0;
+                    double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount + balanceInterestAmount, transaction.InterestRate);
+                    DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
+
+                    if (generatedDate < transaction.StartDate)
+                    {
+                        return null;
+                    }
+                    var interestEMI = new InterestEMI
+                    {
+                        TransactionId = transaction.Id,
+                        PrincipalAmount = transaction.PrincipalAmount,
+                        InterestRate = transaction.InterestRate,
+                        InterestAmount = interestAmount,
+                        BalanceInterestAmount = interestAmount,
+                        PaidInterestAmount = 0,
+                        GeneratedDate = generatedDate,
+                        EmiMonth = emiMonth
+
+
+                    };
+                    var createdInterestEMI = await _interestTransactionRepository.CreateAsync(interestEMI);
+                    interestEMIs.Add(createdInterestEMI);
+
+                }
+
+                return interestEMIs;
+           
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
 
         public async Task<InterestEMI> UpdateInterestTransactionPaymentAsync(UpdateInterestEMIDto updateDto)

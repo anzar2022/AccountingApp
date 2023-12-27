@@ -91,8 +91,28 @@ namespace TransactionApi.Controllers
             }
         }
 
+        [HttpPost("GenerateInterestEMIs")]
+        public async Task<ActionResult> GetInterestEMIForTransactionsAsync([FromBody] GenerateInterestEMIsDto interestEmi)
+        {
+            try
+            {
 
-            [HttpPost("PayInterestAmount")]
+                _logger.LogInformation($"{nameof(GetInterestEMIForTransactionsAsync)}");
+
+                var interestTransactions = await _interestTransactionService.GetInterestEMIForTransactionsAsync(interestEmi.EmiMonth);
+
+
+                return Ok(interestTransactions);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        [HttpPost("PayInterestAmount")]
             public async Task<ActionResult> PayInterestTransactionAsync([FromBody] UpdateInterestEMIDto interestEmi)
             {
                 try

@@ -10,6 +10,7 @@ namespace TransactionApi.Services
         Task<List<InterestEMI>> GetInterestTransactionByAccountIdAsync(Guid accountId);
         Task<IEnumerable<GetInterestEMIDto>> GetInterestTransactionsByIdAsync(Guid transactionId);
         Task<InterestEMI> GetInterestEMIByTransactionIdAsync([FromBody] GenerateInterestEMIDto interestEmi);
+        Task<List<InterestEMI>> GetInterestEMIForTransactionsAsync(string emiMonth);
         Task<InterestEMI> UpdateInterestTransactionPaymentAsync(UpdateInterestEMIDto updateDto);
         Task<GetInterestEMIDto> GetInterestTransactionByIdAsync(Guid Id);
     }
