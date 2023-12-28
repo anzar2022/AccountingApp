@@ -73,16 +73,21 @@ namespace TransactionApi.Controllers
         {
             try
             {
-                //changes
                 // Get the current month and year
-                var targetMonthYear = DateTime.Now.ToString("MM/yyyy");
+                var currentMonthYear = DateTime.Now.ToString("MM/yyyy");
 
-                var transactions = await _dashboardservice.GetInterestTransactionsDetailAsync(targetMonthYear);
+                // Get the previous month and year
+                var previousMonthYear = DateTime.Now.AddMonths(-1).ToString("MM/yyyy");
+
+                var currentTransactions = await _dashboardservice.GetInterestTransactionsDetailAsync(currentMonthYear);
+                var previousTransactions = await _dashboardservice.GetInterestTransactionsDetailAsync(previousMonthYear);
 
                 var result = new
                 {
-                    MonthYear = targetMonthYear,
-                    Transactions = transactions
+                    CurrentMonthYear = currentMonthYear,
+                    PreviousMonthYear = previousMonthYear,
+                    CurrentTransactions = currentTransactions,
+                    PreviousTransactions = previousTransactions
                 };
 
                 return Ok(result);
@@ -92,6 +97,7 @@ namespace TransactionApi.Controllers
                 throw;
             }
         }
+
 
 
 
