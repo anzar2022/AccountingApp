@@ -201,7 +201,7 @@ namespace TransactionApi.Services
 
                 if (transactions == null)
                 {
-                    return null;
+                    throw new Exception("No transactions found to generate interest EMI.");
                 }
                 foreach (var transaction in transactions)
                 {
