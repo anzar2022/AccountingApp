@@ -67,11 +67,41 @@ namespace TransactionApi.Services
             }
         }
 
+        //public async Task<List<UnPaidInterestAmount>> GetAccountsAndUnpaidInterestAsync()
+        //{
+        //    try
+        //    {
+        //        // Ensure you await the repository methods to get the actual data
+        //        var accounts = await _accountRepository.GetAllAsync();
+        //        var transactions = await _accountTransactionRepository.GetAllAsync();
+        //        var interestEMIs = await _interestTransactionRepository.GetAllAsync();
+
+        //        var result = (
+        //            from account in accounts
+        //            join transaction in transactions on account.Id equals transaction.AccountId into accountTransactions
+        //            from transaction in accountTransactions.DefaultIfEmpty()
+        //            join interestEMI in interestEMIs on transaction.Id equals interestEMI.TransactionId into interestEMIsGroup
+        //            from interestEMI in interestEMIsGroup.DefaultIfEmpty()
+        //            where interestEMI == null || interestEMI.PaidInterestAmount == 0
+        //            select new UnPaidInterestAmount(
+        //                AccountId: account.Id,
+        //                AccountName: account.AccountName,
+        //                InterestAmount: interestEMI != null ? interestEMI.InterestAmount : 0,
+        //                InterestId: interestEMI != null ? interestEMI.Id : Guid.Empty
+        //            )).ToList();
+
+
+        //        return result;
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
         public async Task<List<UnPaidInterestAmount>> GetAccountsAndUnpaidInterestAsync()
         {
             try
             {
-                // Ensure you await the repository methods to get the actual data
                 var accounts = await _accountRepository.GetAllAsync();
                 var transactions = await _accountTransactionRepository.GetAllAsync();
                 var interestEMIs = await _interestTransactionRepository.GetAllAsync();
@@ -80,16 +110,15 @@ namespace TransactionApi.Services
                     from account in accounts
                     join transaction in transactions on account.Id equals transaction.AccountId into accountTransactions
                     from transaction in accountTransactions.DefaultIfEmpty()
-                    join interestEMI in interestEMIs on transaction.Id equals interestEMI.TransactionId into interestEMIsGroup
+                    join interestEMI in interestEMIs on transaction?.Id equals interestEMI?.TransactionId into interestEMIsGroup
                     from interestEMI in interestEMIsGroup.DefaultIfEmpty()
                     where interestEMI == null || interestEMI.PaidInterestAmount == 0
                     select new UnPaidInterestAmount(
                         AccountId: account.Id,
                         AccountName: account.AccountName,
-                        InterestAmount: interestEMI != null ? interestEMI.InterestAmount : 0,
-                        InterestId: interestEMI != null ? interestEMI.Id : Guid.Empty
+                        InterestAmount: interestEMI?.InterestAmount ?? 0,
+                        InterestId: interestEMI?.Id ?? Guid.Empty
                     )).ToList();
-
 
                 return result;
             }
@@ -105,7 +134,7 @@ namespace TransactionApi.Services
     }
 
 
-    
+
 }
 
 
