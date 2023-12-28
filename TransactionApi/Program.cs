@@ -1,3 +1,4 @@
+using AccountApi.Repositories;
 using AccountDatabase.Data;
 using AccountDatabase.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IAccountTransactionService, AccountTransactionService
 builder.Services.AddScoped<IInterestTransactionRepository, InterestTransactionRepository>();
 builder.Services.AddScoped<IInterestTransactionService, InterestTransactionService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 
 builder.Services.AddAutoMapper(typeof(Program));
