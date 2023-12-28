@@ -196,15 +196,20 @@ namespace TransactionApi.Services
 
             try
             {
-                
                 var transactions = await _accountTransactionRepository.GetAllAsync();
 
                 if (transactions == null)
                 {
                     throw new Exception("No transactions found to generate interest EMI.");
                 }
+
                 foreach (var transaction in transactions)
                 {
+                    if (transaction == null)
+                    {
+                        continue;
+                    }
+
                     var existedInterestTransactions = await _interestTransactionRepository.GetAllAsync();
                     double balanceInterestAmount = existedInterestTransactions?.Sum(e => e.BalanceInterestAmount) ?? 0;
                     double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount + balanceInterestAmount, transaction.InterestRate);
@@ -212,8 +217,9 @@ namespace TransactionApi.Services
 
                     if (generatedDate < transaction.StartDate)
                     {
-                        return null;
+                        throw new Exception("Generated date is before transaction start date. Cannot generate interest EMI.");
                     }
+
                     var interestEMI = new InterestEMI
                     {
                         TransactionId = transaction.Id,
@@ -224,23 +230,20 @@ namespace TransactionApi.Services
                         PaidInterestAmount = 0,
                         GeneratedDate = generatedDate,
                         EmiMonth = emiMonth
-
-
                     };
+
                     var createdInterestEMI = await _interestTransactionRepository.CreateAsync(interestEMI);
                     interestEMIs.Add(createdInterestEMI);
-
                 }
 
                 return interestEMIs;
-           
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
 
 
         public async Task<InterestEMI> UpdateInterestTransactionPaymentAsync(UpdateInterestEMIDto updateDto)
