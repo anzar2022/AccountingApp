@@ -68,6 +68,35 @@ namespace TransactionApi.Controllers
         //        throw;
         //    }
         //}
+        //[HttpGet("GetInterestTransactionsForAllAccounts")]
+        //public async Task<ActionResult> GetAccountTransactionsWithInterestAsync()
+        //{
+        //    try
+        //    {
+        //        // Get the current month and year
+        //        var currentMonthYear = DateTime.Now.ToString("MM/yyyy");
+
+        //        // Get the previous month and year
+        //        var previousMonthYear = DateTime.Now.AddMonths(-1).ToString("MM/yyyy");
+
+        //        var currentTransactions = await _dashboardservice.GetInterestTransactionsDetailAsync(currentMonthYear);
+        //        var previousTransactions = await _dashboardservice.GetInterestTransactionsDetailAsync(previousMonthYear);
+
+        //        var result = new
+        //        {
+        //            CurrentMonthYear = currentMonthYear,
+        //            PreviousMonthYear = previousMonthYear,
+        //            CurrentTransactions = currentTransactions,
+        //            PreviousTransactions = previousTransactions
+        //        };
+
+        //        return Ok(result);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
         [HttpGet("GetInterestTransactionsForAllAccounts")]
         public async Task<ActionResult> GetAccountTransactionsWithInterestAsync()
         {
@@ -79,15 +108,21 @@ namespace TransactionApi.Controllers
                 // Get the previous month and year
                 var previousMonthYear = DateTime.Now.AddMonths(-1).ToString("MM/yyyy");
 
+                // Get the month before the previous month and year
+                var monthBeforePreviousMonthYear = GetMonthYearWithOffset(-2);
+
                 var currentTransactions = await _dashboardservice.GetInterestTransactionsDetailAsync(currentMonthYear);
                 var previousTransactions = await _dashboardservice.GetInterestTransactionsDetailAsync(previousMonthYear);
+                var monthBeforePreviousTransactions = await _dashboardservice.GetInterestTransactionsDetailAsync(monthBeforePreviousMonthYear);
 
                 var result = new
                 {
                     CurrentMonthYear = currentMonthYear,
                     PreviousMonthYear = previousMonthYear,
+                    MonthBeforePreviousMonthYear = monthBeforePreviousMonthYear,
                     CurrentTransactions = currentTransactions,
-                    PreviousTransactions = previousTransactions
+                    PreviousTransactions = previousTransactions,
+                    MonthBeforePreviousTransactions = monthBeforePreviousTransactions
                 };
 
                 return Ok(result);
@@ -97,6 +132,12 @@ namespace TransactionApi.Controllers
                 throw;
             }
         }
+
+        private string GetMonthYearWithOffset(int offset)
+        {
+            return DateTime.Now.AddMonths(offset).ToString("MM/yyyy");
+        }
+
 
 
 
