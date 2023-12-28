@@ -139,6 +139,22 @@ namespace TransactionApi.Controllers
         }
 
 
+        [HttpGet("GetAccountsAndUnpaidInterestAsync")]
+        public async Task<ActionResult> GetAccountsAndUnpaidInterestAsync()
+        {
+            try
+            {
+                var pendingInterestEMIs = await _dashboardservice.GetAccountsAndUnpaidInterestAsync();
+                return Ok(pendingInterestEMIs);
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
 
 
