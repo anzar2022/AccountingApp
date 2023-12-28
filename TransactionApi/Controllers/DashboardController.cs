@@ -42,46 +42,56 @@ namespace TransactionApi.Controllers
         //    }
         //}
 
+        //[HttpGet("GetInterestTransactionsForAllAccounts")]
+        //public async Task<ActionResult> GetAccountTransactionsWithInterestAsync()
+        //{
+        //    try
+        //    {
+        //        var emiMonth = DateTime.Now.Month.ToString();
+        //        int numberOfPreviousMonths = 2;  
+        //        Dictionary<string, object> transactionsByMonth = new Dictionary<string, object>();
+        //        for (int i = 0; i <= numberOfPreviousMonths; i++)
+        //        {
+        //            var targetMonth = (int.Parse(emiMonth) - i).ToString(); 
+        //            var transactions = await _dashboardservice.GetInterestTransactionsDetailAsync(targetMonth);
+        //            transactionsByMonth.Add($"Month{i}", new
+        //            {
+        //                Month = targetMonth,
+        //                Transactions = transactions
+        //            });
+        //        }
+
+        //          return Ok(transactionsByMonth);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
         [HttpGet("GetInterestTransactionsForAllAccounts")]
         public async Task<ActionResult> GetAccountTransactionsWithInterestAsync()
         {
             try
             {
-                // Get the current month as a string
-                var emiMonth = DateTime.Now.Month.ToString();
+                // Get the current month and year
+                var targetMonthYear = DateTime.Now.ToString("MM/yyyy");
 
-                // Number of previous months to fetch transactions for
-                int numberOfPreviousMonths = 2;  // Change this value based on your requirement
+                var transactions = await _dashboardservice.GetInterestTransactionsDetailAsync(targetMonthYear);
 
-                // Create a dictionary to store transactions for each month
-                Dictionary<string, object> transactionsByMonth = new Dictionary<string, object>();
-
-                // Loop through the current month and the preceding months
-                for (int i = 0; i <= numberOfPreviousMonths; i++)
+                var result = new
                 {
-                    // Calculate the month for which to fetch transactions
-                    var targetMonth = (int.Parse(emiMonth) - i).ToString();
+                    MonthYear = targetMonthYear,
+                    Transactions = transactions
+                };
 
-                    // Fetch transactions for the target month
-                    var transactions = await _dashboardservice.GetInterestTransactionsDetailAsync(targetMonth);
-
-                    // Add the transactions to the dictionary using a key indicating the month
-                    transactionsByMonth.Add($"Month{i}", new
-                    {
-                        Month = targetMonth,
-                        Transactions = transactions
-                    });
-                }
-
-                // You can customize this logic based on how your service handles month-based transactions
-
-                return Ok(transactionsByMonth);
+                return Ok(result);
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
 
 
     }

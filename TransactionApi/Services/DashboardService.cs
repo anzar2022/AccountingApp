@@ -1,4 +1,6 @@
-﻿using AccountDatabase.Entities;
+﻿using AccountApi.Repositories;
+using AccountApi.Services;
+using AccountDatabase.Entities;
 using AutoMapper;
 using System.Linq.Expressions;
 using TransactionApi.Clients;
@@ -11,13 +13,15 @@ namespace TransactionApi.Services
     {
         private IAccountTransactionRepository _accountTransactionRepository;
         private IInterestTransactionRepository _interestTransactionRepository;
+        private IAccountRepository _accountRepository;
         private ILogger<DashboardService> _logger;
         private IMapper _mapper;
         private readonly AccountClient accountClient;
-        public DashboardService(IAccountTransactionRepository accountTransactionRepository, IInterestTransactionRepository interestTransactionRepository, ILogger<DashboardService> logger, IMapper mapper, AccountClient accountClient)
+        public DashboardService(IAccountTransactionRepository accountTransactionRepository, IInterestTransactionRepository interestTransactionRepository, IAccountRepository accountRepository, ILogger<DashboardService> logger, IMapper mapper, AccountClient accountClient)
         {
             _accountTransactionRepository = accountTransactionRepository;
             _interestTransactionRepository = interestTransactionRepository;
+            _accountRepository = accountRepository;
             _logger = logger;
             _mapper = mapper;
             this.accountClient = accountClient;
@@ -61,6 +65,119 @@ namespace TransactionApi.Services
                 throw;
             }
         }
+
+        //public async Task<List<UnpaidInterestEMIDto>> GetUnpaidInterestEMIsForCurrentMonthAsync()
+        //{
+        //    try
+        //    {
+        //        var emiMonth = DateTime.Now.Month.ToString(); // Change this to get the current month as needed
+        //        Expression<Func<InterestEMI, bool>> monthEMI = e => e.EmiMonth == emiMonth;
+        //        var interestEMIs = await _interestTransactionRepository.GetAllAsync(monthEMI);
+
+        //        List<UnpaidInterestEMIDto> unpaidInterestEMIs = new List<UnpaidInterestEMIDto>();
+
+        //        foreach (var interestTransaction in interestEMIs)
+        //        {
+        //            // Check if the interest EMITransaction is not already created for the current month
+        //            if (interestTransaction == null)
+        //            {
+        //                // The interest EMI is not created for the current month
+        //                return null;
+        //            }
+        //            else
+        //            {
+        //                // Check if paidInterestAmount is zero
+        //                if (interestTransaction.PaidInterestAmount == 0)
+        //                {
+        //                    // Fetch account name using accountId (assuming you have a method for this)
+        //                    var account = await _accountRepository.GetByIdAsync(interestTransaction.AccountTransaction.AccountId);
+
+        //                    // Add relevant information to the list
+        //                    var unpaidInterestEMIInfo = new UnpaidInterestEMIDto
+        //                    {
+        //                        AccountId = account.Id,
+        //                        InterestEMIId = interestTransaction.Id,
+        //                        AccountName = account.AccountName,
+        //                        interestAmount = interestTransaction.InterestAmount
+        //                    };
+
+        //                    unpaidInterestEMIs.Add(unpaidInterestEMIInfo);
+        //                }
+        //            }
+        //        }
+
+        //        if (unpaidInterestEMIs.Count == 0)
+        //        {
+        //            // No pending EMIs for the current month
+        //            return new List<UnpaidInterestEMIDto> { new UnpaidInterestEMIDto { AccountName = "No pending EMIs" } };
+        //        }
+
+        //        return unpaidInterestEMIs;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+        //public async Task<List<UnpaidInterestEMIDto>> GetUnpaidInterestEMIsForCurrentMonthAsync()
+        //{
+        //    try
+        //    {
+        //        var emiMonth = DateTime.Now.Month.ToString(); // Change this to get the current month as needed
+        //        Expression<Func<InterestEMI, bool>> monthEMI = e => e.EmiMonth == emiMonth;
+        //        var interestEMIs = await _interestTransactionRepository.GetAllAsync(monthEMI);
+
+        //        List<UnpaidInterestEMIDto> unpaidInterestEMIs = new List<UnpaidInterestEMIDto>();
+
+        //        foreach (var interestTransaction in interestEMIs)
+        //        {
+        //            // Check if the interest EMITransaction is not already created for the current month
+        //            if (interestTransaction == null)
+        //            {
+        //                // The interest EMI is not created for the current month
+        //                return null;
+        //            }
+        //            else
+        //            {
+        //                // Check if paidInterestAmount is zero
+        //                if (interestTransaction.PaidInterestAmount == 0)
+        //                {
+        //                    // Fetch account name using accountId (assuming you have a method for this)
+        //                    var account = await _accountRepository.GetByIdAsync(interestTransaction.AccountTransaction.AccountId);
+
+        //                    // Add relevant information to the list
+        //                    if (account != null && account.Id != null)
+        //                    {
+        //                        var unpaidInterestEMIInfo = new UnpaidInterestEMIDto
+        //                        {
+        //                            AccountId = account.Id,
+        //                            InterestEMIId = interestTransaction.Id,
+        //                            AccountName = account.AccountName,
+        //                            interestAmount = interestTransaction.InterestAmount
+        //                        };
+
+        //                        unpaidInterestEMIs.Add(unpaidInterestEMIInfo);
+        //                    }
+        //                }
+        //            }
+        //        }
+
+        //        if (unpaidInterestEMIs.Count == 0)
+        //        {
+        //            // No pending EMIs for the current month
+        //            return new List<UnpaidInterestEMIDto> { new UnpaidInterestEMIDto { AccountName = "No pending EMIs" } };
+        //        }
+
+        //        return unpaidInterestEMIs;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+
+
 
 
 
