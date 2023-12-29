@@ -6,6 +6,7 @@ namespace TransactionApi.Services
     {
         Task<IEnumerable<InterestSummaryDetailDto>> GetInterestTransactionsDetailAsync(string emiMonth);
 
-        Task<List<UnPaidInterestAmount>> GetAccountsAndUnpaidInterestAsync();
+        Task<List<UnPaidInterestAmount>> GetAccountsAndUnpaidInterestAsync(string emiMonth);
+        Task<IEnumerable<PrincipalSummaryDetailDto>> GetPrincipalTransactionsDetailAsync(string emiMonth);
     }
 }

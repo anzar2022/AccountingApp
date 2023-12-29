@@ -60,29 +60,101 @@ namespace TransactionApi.Controllers
             }
         }
 
+        [HttpGet("GetPrincipalTransactionsDetailAsync")]
+        public async Task<ActionResult> GetPrincipalTransactionsDetailAsync()
+        {
+            try
+            {
+                // Get the current month and year
+                var currentMonthYear = DateTime.Now.ToString("MM/yyyy");
+
+                // Get the previous month and year
+                var previousMonthYear = DateTime.Now.AddMonths(-1).ToString("MM/yyyy");
+
+                // Get the month before the previous month and year
+                var monthBeforePreviousMonthYear = GetMonthYearWithOffset(-2);
+
+                var currentTransactions = await _dashboardservice.GetPrincipalTransactionsDetailAsync(currentMonthYear);
+                var previousTransactions = await _dashboardservice.GetPrincipalTransactionsDetailAsync(previousMonthYear);
+                var monthBeforePreviousTransactions = await _dashboardservice.GetPrincipalTransactionsDetailAsync(monthBeforePreviousMonthYear);
+
+                var result = new
+                {
+                    CurrentMonthYear = currentMonthYear,
+                    PreviousMonthYear = previousMonthYear,
+                    MonthBeforePreviousMonthYear = monthBeforePreviousMonthYear,
+                    CurrentTransactions = currentTransactions,
+                    PreviousTransactions = previousTransactions,
+                    MonthBeforePreviousTransactions = monthBeforePreviousTransactions
+                };
+
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
         private string GetMonthYearWithOffset(int offset)
         {
             return DateTime.Now.AddMonths(offset).ToString("MM/yyyy");
         }
 
 
+        //[HttpGet("GetAccountsAndUnpaidInterestAsync")]
+        //public async Task<ActionResult> GetAccountsAndUnpaidInterestAsync()
+        //{
+        //    try
+        //    {
+        //        var currentMonthYear = DateTime.Now.ToString("MM/yyyy");
+        //        var pendingInterestEMIs = await _dashboardservice.GetAccountsAndUnpaidInterestAsync(currentMonthYear);
+        //        return Ok(pendingInterestEMIs);
+
+
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
         [HttpGet("GetAccountsAndUnpaidInterestAsync")]
         public async Task<ActionResult> GetAccountsAndUnpaidInterestAsync()
         {
             try
             {
-                var pendingInterestEMIs = await _dashboardservice.GetAccountsAndUnpaidInterestAsync();
-                return Ok(pendingInterestEMIs);
+                // Get the current month and year
+                var currentMonthYear = DateTime.Now.ToString("MM/yyyy");
 
+                // Get the previous month and year
+                var previousMonthYear = DateTime.Now.AddMonths(-1).ToString("MM/yyyy");
 
+                // Get the month before the previous month and year
+                var monthBeforePreviousMonthYear = GetMonthYearWithOffset(-2);
+
+                var currentMonth = await _dashboardservice.GetAccountsAndUnpaidInterestAsync(currentMonthYear);
+                var previousMonth = await _dashboardservice.GetAccountsAndUnpaidInterestAsync(previousMonthYear);
+                var monthBeforePreviousMonth = await _dashboardservice.GetAccountsAndUnpaidInterestAsync(monthBeforePreviousMonthYear);
+
+                var result = new
+                {
+                    CurrentMonthYear = currentMonthYear,
+                    PreviousMonthYear = previousMonthYear,
+                    MonthBeforePreviousMonthYear = monthBeforePreviousMonthYear,
+                    currentMonth = currentMonth,
+                    previousMonth = previousMonth,
+                    monthBeforePreviousMonth = monthBeforePreviousMonth
+                };
+
+                return Ok(result);
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
-
 
 
 
