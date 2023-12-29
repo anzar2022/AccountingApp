@@ -11,6 +11,6 @@ namespace TransactionApi.Services
 
         Task<PrincipalSummaryDetailDto> GetPrincipalTransactionsSummaryAsync(string emiMonth);
 
-        Task<List<UnPaidPrincipalAmount>> GetUnpaidPrincipalAmountAsync(string emiMonth);
+        Task<List<UnPaidPrincipalAmount>> GetUnpaidPrincipalAmountAsync(DateOnly startDate);
     }
 }

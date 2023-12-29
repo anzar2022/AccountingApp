@@ -244,29 +244,68 @@ namespace TransactionApi.Services
             }
         }
 
-        public async Task<List<UnPaidPrincipalAmount>> GetUnpaidPrincipalAmountAsync(string emiMonth)
+        //public async Task<List<UnPaidPrincipalAmount>> GetUnpaidPrincipalAmountAsync(string emiMonth)
+        //{
+        //    try
+        //    {
+
+        //        var accounts = await _accountRepository.GetAllAsync();
+
+
+        //        var transactions = await _accountTransactionRepository.GetAllAsync();
+
+
+        //        var result = (
+        //            from account in accounts
+        //            join transaction in transactions on account.Id equals transaction.AccountId into accountTransactions
+        //            from transaction in accountTransactions.DefaultIfEmpty()
+        //            where transaction.BalanceAmount != 0 || transaction == null
+        //            select new UnPaidPrincipalAmount(
+        //                AccountId: account.Id,
+        //                AccountName: account.AccountName,
+        //                TransactionId: transaction != null ? transaction.Id : Guid.Empty,
+        //                PrincipalAmount: transaction != null ? transaction.PrincipalAmount : 0,
+        //                BalanceAmount: transaction != null ? transaction.BalanceAmount : 0
+        //            )).ToList();
+
+        //        return result;
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        public async Task<List<UnPaidPrincipalAmount>> GetUnpaidPrincipalAmountAsync(DateOnly startDate)
         {
             try
             {
-
                 var accounts = await _accountRepository.GetAllAsync();
 
+                // Extract month and year from startDate
+                int month = startDate.Month;
+                int year = startDate.Year;
 
-                var transactions = await _accountTransactionRepository.GetAllAsync();
+                // Filter transactions based on month and year
+                Expression<Func<AccountTransaction, bool>> stDate = e =>
+                    e.StartDate.Month == month &&
+                    e.StartDate.Year == year;
 
+                var transactions = await _accountTransactionRepository.GetAllAsync(stDate);
 
                 var result = (
-                    from account in accounts
-                    join transaction in transactions on account.Id equals transaction.AccountId into accountTransactions
-                    from transaction in accountTransactions.DefaultIfEmpty()
-                    where transaction.BalanceAmount != 0 || transaction == null
-                    select new UnPaidPrincipalAmount(
-                        AccountId: account.Id,
-                        AccountName: account.AccountName,
-                        TransactionId: transaction != null ? transaction.Id : Guid.Empty,
-                        PrincipalAmount: transaction != null ? transaction.PrincipalAmount : 0,
-                        BalanceAmount: transaction != null ? transaction.BalanceAmount : 0
-                    )).ToList();
+        from account in accounts
+        join transaction in transactions on account.Id equals transaction.AccountId into accountTransactions
+        from transaction in accountTransactions.DefaultIfEmpty()
+        where transaction == null || transaction.BalanceAmount != 0
+        select new UnPaidPrincipalAmount(
+            AccountId: account.Id,
+            AccountName: account.AccountName,
+            TransactionId: transaction != null ? transaction.Id : Guid.Empty,
+            PrincipalAmount: transaction != null ? transaction.PrincipalAmount : 0,
+            BalanceAmount: transaction != null ? transaction.BalanceAmount : 0
+        )).ToList();
+
 
                 return result;
             }
@@ -275,6 +314,7 @@ namespace TransactionApi.Services
                 throw;
             }
         }
+
 
 
 

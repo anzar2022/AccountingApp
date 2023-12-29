@@ -156,32 +156,71 @@ namespace TransactionApi.Controllers
             }
         }
 
+        //[HttpGet("GetUnpaidPrincipalAmountAsync")]
+        //public async Task<ActionResult> GetUnpaidPrincipalAmountAsync()
+        //{
+        //    try
+        //    {
+        //        // Get the current month and year
+        //        //var currentMonthYear = DateTime.Now.ToString("MM/yyyy");
+        //        DateOnly currentDateOnly = DateOnly.FromDateTime(DateTime.Now);
+        //        DateOnly currentMonthYear = new DateOnly(currentDateOnly.Year, currentDateOnly.Month, 1);
+
+        //        // Get the previous month and year
+        //        //var previousMonthYear = DateTime.Now.AddMonths(-1).ToString("MM/yyyy");
+
+        //        // Get the month before the previous month and year
+        //        //var monthBeforePreviousMonthYear = GetMonthYearWithOffset(-2);
+
+        //        var currentMonth = await _dashboardservice.GetUnpaidPrincipalAmountAsync(currentMonthYear);
+        //       // var previousMonth = await _dashboardservice.GetUnpaidPrincipalAmountAsync(previousMonthYear);
+        //        //var monthBeforePreviousMonth = await _dashboardservice.GetUnpaidPrincipalAmountAsync(monthBeforePreviousMonthYear);
+
+        //        var result = new
+        //        {
+        //            CurrentMonthYear = currentMonthYear,
+        //            //PreviousMonthYear = previousMonthYear,
+        //            //MonthBeforePreviousMonthYear = monthBeforePreviousMonthYear,
+        //            CurrentMonth = currentMonth,
+        //            //PreviousMonth = previousMonth,
+        //            //MonthBeforePreviousMonth = monthBeforePreviousMonth
+        //        };
+
+        //        return Ok(result);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+
         [HttpGet("GetUnpaidPrincipalAmountAsync")]
         public async Task<ActionResult> GetUnpaidPrincipalAmountAsync()
         {
             try
             {
                 // Get the current month and year
-                var currentMonthYear = DateTime.Now.ToString("MM/yyyy");
+                DateOnly currentDateOnly = DateOnly.FromDateTime(DateTime.Now);
+                DateOnly currentMonthYear = new DateOnly(currentDateOnly.Year, currentDateOnly.Month, 1);
 
                 // Get the previous month and year
-                //var previousMonthYear = DateTime.Now.AddMonths(-1).ToString("MM/yyyy");
+                DateOnly previousMonthYear = currentMonthYear.AddMonths(-1);
 
                 // Get the month before the previous month and year
-                //var monthBeforePreviousMonthYear = GetMonthYearWithOffset(-2);
+                DateOnly monthBeforePreviousMonthYear = currentMonthYear.AddMonths(-2);
 
                 var currentMonth = await _dashboardservice.GetUnpaidPrincipalAmountAsync(currentMonthYear);
-               // var previousMonth = await _dashboardservice.GetUnpaidPrincipalAmountAsync(previousMonthYear);
-                //var monthBeforePreviousMonth = await _dashboardservice.GetUnpaidPrincipalAmountAsync(monthBeforePreviousMonthYear);
+                var previousMonth = await _dashboardservice.GetUnpaidPrincipalAmountAsync(previousMonthYear);
+                var monthBeforePreviousMonth = await _dashboardservice.GetUnpaidPrincipalAmountAsync(monthBeforePreviousMonthYear);
 
                 var result = new
                 {
                     CurrentMonthYear = currentMonthYear,
-                    //PreviousMonthYear = previousMonthYear,
-                    //MonthBeforePreviousMonthYear = monthBeforePreviousMonthYear,
+                    PreviousMonthYear = previousMonthYear,
+                    MonthBeforePreviousMonthYear = monthBeforePreviousMonthYear,
                     CurrentMonth = currentMonth,
-                    //PreviousMonth = previousMonth,
-                    //MonthBeforePreviousMonth = monthBeforePreviousMonth
+                    PreviousMonth = previousMonth,
+                    MonthBeforePreviousMonth = monthBeforePreviousMonth
                 };
 
                 return Ok(result);
@@ -191,6 +230,7 @@ namespace TransactionApi.Controllers
                 throw;
             }
         }
+
 
 
 
