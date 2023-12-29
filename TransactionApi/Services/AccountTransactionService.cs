@@ -384,9 +384,9 @@ namespace TransactionApi.Services
                 }
 
                 // Update the paid interest amount and subtract from the balance interest amount.
-                transaction.PaidAmount += principalTransaction.PaidAmount;
+                transaction.PaidAmount += principalTransaction.paidAmount;
                 //round it here to 2 decimal 
-                transaction.BalanceAmount = Math.Round(transaction.BalanceAmount - principalTransaction.PaidAmount, 2);
+                transaction.BalanceAmount = Math.Round(transaction.BalanceAmount - principalTransaction.paidAmount, 2);
                 //interestEMI.BalanceInterestAmount -= updateDto.PaidInterestAmount;
 
                 // Update other fields if needed.

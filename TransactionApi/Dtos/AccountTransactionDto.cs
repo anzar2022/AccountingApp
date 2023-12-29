@@ -21,5 +21,5 @@ namespace TransactionApi.Dtos
 
     public record TransactionsRequestDto(Guid Id, string? EmiMonth);
 
-    public record PayPrincipalTransaction(Guid Id, double PaidAmount);
+    public record PayPrincipalTransaction(Guid Id, double paidAmount);
 }
