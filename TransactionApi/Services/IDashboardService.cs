@@ -10,5 +10,7 @@ namespace TransactionApi.Services
         //Task<IEnumerable<PrincipalSummaryDetailDto>> GetPrincipalTransactionsDetailAsync(string emiMonth);
 
         Task<PrincipalSummaryDetailDto> GetPrincipalTransactionsSummaryAsync(string emiMonth);
+
+        Task<List<UnPaidPrincipalAmount>> GetUnpaidPrincipalAmountAsync(string emiMonth);
     }
 }

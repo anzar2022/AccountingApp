@@ -135,7 +135,7 @@ namespace TransactionApi.Services
 
                     // Filter transactions for the selected month and year
                     var filteredTransactions = accountTransactions
-                        .Where(t => t.CreatedDate.Month == selectedMonth && t.CreatedDate.Year == selectedYear);
+                        .Where(t => t.StartDate.Month == selectedMonth && t.StartDate.Year == selectedYear);
 
                     if (filteredTransactions.Any())
                     {
@@ -243,6 +243,45 @@ namespace TransactionApi.Services
                 throw;
             }
         }
+
+        public async Task<List<UnPaidPrincipalAmount>> GetUnpaidPrincipalAmountAsync(string emiMonth)
+        {
+            try
+            {
+
+                var accounts = await _accountRepository.GetAllAsync();
+
+
+                var transactions = await _accountTransactionRepository.GetAllAsync();
+
+
+                var result = (
+                    from account in accounts
+                    join transaction in transactions on account.Id equals transaction.AccountId into accountTransactions
+                    from transaction in accountTransactions.DefaultIfEmpty()
+                    where transaction.BalanceAmount != 0 || transaction == null
+                    select new UnPaidPrincipalAmount(
+                        AccountId: account.Id,
+                        AccountName: account.AccountName,
+                        TransactionId: transaction != null ? transaction.Id : Guid.Empty,
+                        PrincipalAmount: transaction != null ? transaction.PrincipalAmount : 0,
+                        BalanceAmount: transaction != null ? transaction.BalanceAmount : 0
+                    )).ToList();
+
+                return result;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+
+
+
+
+
+
 
 
 

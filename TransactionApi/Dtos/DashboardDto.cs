@@ -5,5 +5,7 @@
     //public record PrincipalSummaryDetailDto(Guid AccountId, string AccountName,  double TotalPrincipalAmount, double TotalBalanceAmount, double TotalPaidAmount, double InterestRate);
     public record PrincipalSummaryDetailDto( double TotalPrincipalAmount, double TotalBalanceAmount, double TotalPaidAmount);
 
-    public record UnPaidInterestAmount(Guid AccountId, string AccountName, double InterestAmount, Guid InterestId); 
+    public record UnPaidInterestAmount(Guid AccountId, string AccountName, double InterestAmount, Guid InterestId);
+
+    public record UnPaidPrincipalAmount(Guid AccountId, string AccountName, Guid TransactionId , double PrincipalAmount, double BalanceAmount);
 }
