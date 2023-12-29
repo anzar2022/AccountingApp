@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using TransactionApi.Clients;
 using TransactionApi.Dtos;
 using TransactionApi.Repositories;
+using static TransactionApi.Dtos.InterestEMIDto;
 
 namespace TransactionApi.Services
 {
@@ -367,6 +368,39 @@ namespace TransactionApi.Services
             {
 
                 throw;
+            }
+        }
+
+        public async Task<AccountTransaction> PayPrincipalTransactionAsync(PayPrincipalTransaction principalTransaction)
+        {
+            try
+            {
+                var transaction = await _accountTransactionRepository.GetByIdAsync(principalTransaction.Id);
+                //check
+                if (transaction == null)
+                {
+                    // Handle the case where the interest transaction with the specified Id is not found.
+                    return null;
+                }
+
+                // Update the paid interest amount and subtract from the balance interest amount.
+                transaction.PaidAmount += principalTransaction.PaidAmount;
+                //round it here to 2 decimal 
+                transaction.BalanceAmount = Math.Round(transaction.BalanceAmount - principalTransaction.PaidAmount, 2);
+                //interestEMI.BalanceInterestAmount -= updateDto.PaidInterestAmount;
+
+                // Update other fields if needed.
+
+                // Use your existing update method to save changes to the database.
+                await _accountTransactionRepository.UpdateAsync(transaction);
+
+                return transaction;
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception here, you can log it or perform any other error handling.
+                // You can also throw a custom exception if needed.
+                throw new ApplicationException("An error occurred while updating the interest transaction payment.", ex);
             }
         }
     }

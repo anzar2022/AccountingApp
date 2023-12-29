@@ -20,4 +20,6 @@ namespace TransactionApi.Dtos
     public record AccountTransactionRequestDto(Guid accountId, string? EmiMonth);
 
     public record TransactionsRequestDto(Guid Id, string? EmiMonth);
+
+    public record PayPrincipalTransaction(Guid Id, double PaidAmount);
 }

@@ -1,4 +1,5 @@
-﻿using TransactionApi.Dtos;
+﻿using AccountDatabase.Entities;
+using TransactionApi.Dtos;
 
 namespace TransactionApi.Services
 {
@@ -13,5 +14,7 @@ namespace TransactionApi.Services
         Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionWithInterestAsync(Guid accountId, string emiMonth);
         Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionsWithInterestAsync(string emiMonth);
         Task<UpdateAccountTransactionDto> UpdateAccountTransactionAsync(Guid Id, UpdateAccountTransactionDto account);
+
+        Task<AccountTransaction> PayPrincipalTransactionAsync(PayPrincipalTransaction principalTransaction);
     }
 }

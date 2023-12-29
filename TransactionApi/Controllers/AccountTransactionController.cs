@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TransactionApi.Dtos;
 using TransactionApi.Services;
+using static TransactionApi.Dtos.InterestEMIDto;
 
 namespace TransactionApi.Controllers
 {
@@ -128,6 +129,26 @@ namespace TransactionApi.Controllers
             {
                 var accounts = await _accountTransactionService.DeleteAccountTransactionAsync(Id);
                 return Ok(accounts);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost("PayPrincipalAmount")]
+        public async Task<ActionResult> PayPrincipalTransactionAsync([FromBody] PayPrincipalTransaction principalTransaction)
+        {
+            try
+            {
+                //changes
+                _logger.LogInformation($"{nameof(PayPrincipalTransactionAsync)}");
+
+                var interestTransactions = await _accountTransactionService.PayPrincipalTransactionAsync(principalTransaction);
+
+
+                return Ok(interestTransactions);
             }
             catch (Exception)
             {
