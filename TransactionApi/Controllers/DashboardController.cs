@@ -74,9 +74,9 @@ namespace TransactionApi.Controllers
                 // Get the month before the previous month and year
                 var monthBeforePreviousMonthYear = GetMonthYearWithOffset(-2);
 
-                var currentTransactions = await _dashboardservice.GetPrincipalTransactionsDetailAsync(currentMonthYear);
-                var previousTransactions = await _dashboardservice.GetPrincipalTransactionsDetailAsync(previousMonthYear);
-                var monthBeforePreviousTransactions = await _dashboardservice.GetPrincipalTransactionsDetailAsync(monthBeforePreviousMonthYear);
+                var currentTransactions = await _dashboardservice.GetPrincipalTransactionsSummaryAsync(currentMonthYear);
+                var previousTransactions = await _dashboardservice.GetPrincipalTransactionsSummaryAsync(previousMonthYear);
+                var monthBeforePreviousTransactions = await _dashboardservice.GetPrincipalTransactionsSummaryAsync(monthBeforePreviousMonthYear);
 
                 var result = new
                 {

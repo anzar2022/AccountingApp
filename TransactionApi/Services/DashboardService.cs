@@ -70,7 +70,57 @@ namespace TransactionApi.Services
                 throw;
             }
         }
-        public async Task<IEnumerable<PrincipalSummaryDetailDto>> GetPrincipalTransactionsDetailAsync(string emiMonth)
+        //public async Task<IEnumerable<PrincipalSummaryDetailDto>> GetPrincipalTransactionsDetailAsync(string emiMonth)
+        //{
+        //    try
+        //    {
+        //        // Parse the month and year from the emiMonth parameter
+        //        if (DateTime.TryParseExact(emiMonth, "MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+        //        {
+        //            int selectedMonth = parsedDate.Month;
+        //            int selectedYear = parsedDate.Year;
+
+        //            // Get data from GetAccountTransactionsAsync function
+        //            var accountTransactions = await _accountTransactionService.GetAccountTransactionsAsync();
+
+        //            // Filter transactions for the selected month and year
+        //            var filteredTransactions = accountTransactions
+        //                .Where(t => t.CreatedDate.Month == selectedMonth && t.CreatedDate.Year == selectedYear);
+
+        //            if (filteredTransactions.Any())
+        //            {
+        //                // Group by AccountId and InterestRate and calculate sums
+        //                var principalSummary = filteredTransactions
+        //                    .GroupBy(t => new { t.AccountId, t.InterestRate })
+        //                    .Select(g => new PrincipalSummaryDetailDto(
+        //                        AccountId: g.Key.AccountId,
+        //                        AccountName: g.First().AccountName,
+        //                        TotalPrincipalAmount: g.Sum(t => t.PrincipalAmount),
+        //                        TotalPaidAmount: g.Sum(t => t.PaidAmount),
+        //                        TotalBalanceAmount: g.Sum(t => t.BalanceAmount),
+        //                        InterestRate: g.Key.InterestRate
+        //                    ));
+
+        //                return principalSummary;
+        //            }
+        //            else
+        //            {
+        //                return Enumerable.Empty<PrincipalSummaryDetailDto>();
+        //            }
+        //        }
+        //        else
+        //        {
+        //            // Handle invalid emiMonth format
+        //            throw new ArgumentException("Invalid emiMonth format. Use the format 'MM/yyyy'.", nameof(emiMonth));
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        public async Task<PrincipalSummaryDetailDto> GetPrincipalTransactionsSummaryAsync(string emiMonth)
         {
             try
             {
@@ -89,23 +139,23 @@ namespace TransactionApi.Services
 
                     if (filteredTransactions.Any())
                     {
-                        // Group by AccountId and InterestRate and calculate sums
-                        var principalSummary = filteredTransactions
-                            .GroupBy(t => new { t.AccountId, t.InterestRate })
-                            .Select(g => new PrincipalSummaryDetailDto(
-                                AccountId: g.Key.AccountId,
-                                AccountName: g.First().AccountName,
-                                TotalPrincipalAmount: g.Sum(t => t.PrincipalAmount),
-                                TotalPaidAmount: g.Sum(t => t.PaidAmount),
-                                TotalBalanceAmount: g.Sum(t => t.BalanceAmount),
-                                InterestRate: g.Key.InterestRate
-                            ));
+                        // Calculate sums for the entire month
+                        var principalSummary = new PrincipalSummaryDetailDto(
+                        TotalPrincipalAmount: filteredTransactions.Sum(t => t.PrincipalAmount),
+                        TotalBalanceAmount: filteredTransactions.Sum(t => t.BalanceAmount),
+                        TotalPaidAmount: filteredTransactions.Sum(t => t.PaidAmount)
+                    );
 
                         return principalSummary;
                     }
                     else
                     {
-                        return Enumerable.Empty<PrincipalSummaryDetailDto>();
+                        return new PrincipalSummaryDetailDto(
+                         TotalPrincipalAmount: 0,
+                         TotalBalanceAmount: 0,
+                         TotalPaidAmount: 0
+                     );
+
                     }
                 }
                 else
@@ -119,6 +169,7 @@ namespace TransactionApi.Services
                 throw;
             }
         }
+
 
 
 
