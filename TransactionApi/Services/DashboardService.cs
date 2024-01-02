@@ -303,7 +303,8 @@ namespace TransactionApi.Services
             AccountName: account.AccountName,
             TransactionId: transaction != null ? transaction.Id : Guid.Empty,
             PrincipalAmount: transaction != null ? transaction.PrincipalAmount : 0,
-            BalanceAmount: transaction != null ? transaction.BalanceAmount : 0
+            BalanceAmount: transaction != null ? transaction.BalanceAmount : 0,
+            MonthYear: $"{month:D2}/{year}" // Format: MM-YYYY
         )).ToList();
 
 

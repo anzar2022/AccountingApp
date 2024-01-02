@@ -7,5 +7,5 @@
 
     public record UnPaidInterestAmount(Guid AccountId, string AccountName, double InterestAmount, Guid InterestId);
 
-    public record UnPaidPrincipalAmount(Guid AccountId, string AccountName, Guid TransactionId , double PrincipalAmount, double BalanceAmount);
+    public record UnPaidPrincipalAmount(Guid AccountId, string AccountName, Guid TransactionId , double PrincipalAmount, double BalanceAmount, string MonthYear);
 }
