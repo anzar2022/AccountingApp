@@ -154,37 +154,78 @@ namespace TransactionApi.Services
         //    }
         //}
 
+        //public async Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionWithInterestAsync(Guid accountId, string emiMonth)
+        //{
+        //    try
+        //    {
+
+        //        // Get data from repository
+        //        Expression<Func<AccountTransaction, bool>> filter = transaction => transaction.AccountId == accountId;
+        //        var accountTransactionsByAccountId = await _accountTransactionRepository.GetAllAsync(filter);
+
+        //        // Get interestEMIs data from repository
+        //        //you can get emis based on month
+        //        Expression<Func<InterestEMI, bool>> monthEMI = e => e.EmiMonth == emiMonth;
+        //        var interestEMIs = await _interestTransactionRepository.GetAllAsync(monthEMI);
+
+        //        // Join Transactions and InterestEMIs tables and project the result into the DTO
+        //        var updatedAccountTransactions =
+        //            from transaction in accountTransactionsByAccountId
+        //            join interestEMI in interestEMIs on transaction.Id equals interestEMI.TransactionId into joinedData
+        //            from interestEMI in joinedData.DefaultIfEmpty()
+        //            //where (interestEMI == null && emiMonth == null) || (interestEMI != null && interestEMI.EmiMonth == emiMonth)
+        //            //where interestEMI == null || interestEMI.EmiMonth == emiMonth
+        //            select new GetAccountTransactionWithIntDto(
+        //                transaction.Id,
+        //                transaction.InterestRate,
+        //                transaction.PrincipalAmount,
+        //                //interestEMI != null ? interestEMI.PaidInterestAmount : 0,
+        //                interestEMI != null ? interestEMI.InterestAmount : 0,
+        //                interestEMI != null ? interestEMI.PaidInterestAmount : 0,
+        //                interestEMI != null ? interestEMI.EmiMonth : string.Empty,
+        //                 interestEMI != null ? interestEMI.Id : (Guid?)null
+        //            //paid amount pn pathav paidInterestAMount
+        //            );
+
+        //        return updatedAccountTransactions.ToList();
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //    }
+        //}
         public async Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionWithInterestAsync(Guid accountId, string emiMonth)
         {
             try
             {
-              
                 // Get data from repository
                 Expression<Func<AccountTransaction, bool>> filter = transaction => transaction.AccountId == accountId;
                 var accountTransactionsByAccountId = await _accountTransactionRepository.GetAllAsync(filter);
-                
+
                 // Get interestEMIs data from repository
-                //you can get emis based on month
                 Expression<Func<InterestEMI, bool>> monthEMI = e => e.EmiMonth == emiMonth;
                 var interestEMIs = await _interestTransactionRepository.GetAllAsync(monthEMI);
 
-                // Join Transactions and InterestEMIs tables and project the result into the DTO
+                // Get account data from repository
+                var account = await _accountRepository.GetByIdAsync(accountId);
+
+                // Join Transactions, InterestEMIs, and Accounts tables and project the result into the DTO
                 var updatedAccountTransactions =
                     from transaction in accountTransactionsByAccountId
                     join interestEMI in interestEMIs on transaction.Id equals interestEMI.TransactionId into joinedData
                     from interestEMI in joinedData.DefaultIfEmpty()
-                    //where (interestEMI == null && emiMonth == null) || (interestEMI != null && interestEMI.EmiMonth == emiMonth)
-                    //where interestEMI == null || interestEMI.EmiMonth == emiMonth
+                    join acc in new List<Account> { account } on transaction.AccountId equals acc.Id into accJoinedData
+                    from acc in accJoinedData.DefaultIfEmpty()
+                        // where clauses remain the same
                     select new GetAccountTransactionWithIntDto(
                         transaction.Id,
                         transaction.InterestRate,
                         transaction.PrincipalAmount,
-                        //interestEMI != null ? interestEMI.PaidInterestAmount : 0,
                         interestEMI != null ? interestEMI.InterestAmount : 0,
                         interestEMI != null ? interestEMI.PaidInterestAmount : 0,
                         interestEMI != null ? interestEMI.EmiMonth : string.Empty,
-                         interestEMI != null ? interestEMI.Id : (Guid?)null
-                    //paid amount pn pathav paidInterestAMount
+                        interestEMI != null ? interestEMI.Id : (Guid?)null,
+                        acc?.AccountName ?? string.Empty  // Include AccountName
                     );
 
                 return updatedAccountTransactions.ToList();
@@ -194,6 +235,7 @@ namespace TransactionApi.Services
                 throw;
             }
         }
+
         public async Task<List<GetAccountTransactionsWithIntDto>> GetAccountTransactionsWithInterestAsync(string emiMonth)
         {
             try

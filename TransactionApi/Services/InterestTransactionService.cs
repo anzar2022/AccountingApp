@@ -1,4 +1,5 @@
-﻿using AccountDatabase.Entities;
+﻿using AccountApi.Repositories;
+using AccountDatabase.Entities;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
@@ -15,13 +16,15 @@ namespace TransactionApi.Services
         private IInterestTransactionRepository _interestTransactionRepository;
         private IAccountTransactionRepository _accountTransactionRepository;
         private IAccountTransactionService _accountTransactionService;
+        private IAccountRepository _accountRepository;
         private ILogger<InterestEMI> _logger;
         private readonly IMapper _mapper;
-        public InterestTransactionService(IInterestTransactionRepository interestTransactionRepository, IAccountTransactionService accountTransactionService , IAccountTransactionRepository accountTransactionRepository,ILogger<InterestEMI> logger, IMapper mapper)
+        public InterestTransactionService(IInterestTransactionRepository interestTransactionRepository, IAccountTransactionService accountTransactionService , IAccountTransactionRepository accountTransactionRepository,IAccountRepository accountRepository,ILogger<InterestEMI> logger, IMapper mapper)
         {
             _interestTransactionRepository = interestTransactionRepository;
             _accountTransactionService = accountTransactionService;
             _accountTransactionRepository = accountTransactionRepository;
+            _accountRepository = accountRepository;
             _logger = logger;
             _mapper = mapper;
         }
@@ -210,6 +213,7 @@ namespace TransactionApi.Services
                     {
                         continue;
                     }
+                    var accountInfo = _accountRepository.GetByIdAsync(transaction.Id);
 
                     var existedInterestTransactions = await _interestTransactionRepository.GetAllAsync();
                     double balanceInterestAmount = existedInterestTransactions?.Sum(e => e.BalanceInterestAmount) ?? 0;
@@ -230,7 +234,8 @@ namespace TransactionApi.Services
                         BalanceInterestAmount = interestAmount,
                         PaidInterestAmount = 0,
                         GeneratedDate = generatedDate,
-                        EmiMonth = emiMonth
+                        EmiMonth = emiMonth,
+                        
                     };
 
                     var createdInterestEMI = await _interestTransactionRepository.CreateAsync(interestEMI);
