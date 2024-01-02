@@ -214,6 +214,7 @@ namespace TransactionApi.Services
                         transaction.InterestRate,
                         transaction.PrincipalAmount,
                         matchingInterestEMI != null ? matchingInterestEMI.InterestAmount : 0,
+                        matchingInterestEMI != null ? matchingInterestEMI.PaidInterestAmount : 0,
                         matchingInterestEMI != null ? matchingInterestEMI.EmiMonth : string.Empty
                     ));
                 }
