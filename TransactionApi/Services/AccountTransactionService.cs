@@ -1,4 +1,5 @@
-﻿using AccountDatabase.Entities;
+﻿using AccountApi.Repositories;
+using AccountDatabase.Entities;
 using AutoMapper;
 using System.Linq.Expressions;
 using TransactionApi.Clients;
@@ -12,12 +13,14 @@ namespace TransactionApi.Services
     {
         private IAccountTransactionRepository  _accountTransactionRepository;
         private IInterestTransactionRepository _interestTransactionRepository;
+        private IAccountRepository _accountRepository;
         private ILogger<AccountTransactionService> _logger;
         private IMapper _mapper;
         private readonly AccountClient accountClient;
-        public AccountTransactionService(IAccountTransactionRepository  accountTransactionRepository ,IInterestTransactionRepository interestTransactionRepository, ILogger<AccountTransactionService> logger, IMapper mapper, AccountClient accountClient) { 
+        public AccountTransactionService(IAccountTransactionRepository  accountTransactionRepository ,IInterestTransactionRepository interestTransactionRepository, IAccountRepository accountRepository ,ILogger<AccountTransactionService> logger, IMapper mapper, AccountClient accountClient) { 
             _accountTransactionRepository = accountTransactionRepository;
             _interestTransactionRepository = interestTransactionRepository;
+            _accountRepository = accountRepository;
             _logger = logger;
             _mapper = mapper;
             this.accountClient = accountClient;
@@ -191,7 +194,7 @@ namespace TransactionApi.Services
                 throw;
             }
         }
-        public async Task<List<GetAccountTransactionWithIntDto>> GetAccountTransactionsWithInterestAsync(string emiMonth)
+        public async Task<List<GetAccountTransactionsWithIntDto>> GetAccountTransactionsWithInterestAsync(string emiMonth)
         {
             try
             {
@@ -203,21 +206,24 @@ namespace TransactionApi.Services
                 Expression<Func<InterestEMI, bool>> monthEMI = e => e.EmiMonth == emiMonth;
                 var interestEMIs = await _interestTransactionRepository.GetAllAsync(monthEMI);
 
-                var updatedAccountTransactions = new List<GetAccountTransactionWithIntDto>();
+                var updatedAccountTransactions = new List<GetAccountTransactionsWithIntDto>();
 
                 foreach (var transaction in accountTransactionsByAccountId)
                 {
                     // Join Transactions and InterestEMIs tables and project the result into the DTO
                     var matchingInterestEMI = interestEMIs.FirstOrDefault(e => e.TransactionId == transaction.Id);
+                    var accountInfo = await _accountRepository.GetByIdAsync(transaction.AccountId);
 
-                    updatedAccountTransactions.Add(new GetAccountTransactionWithIntDto(
+
+                    updatedAccountTransactions.Add(new GetAccountTransactionsWithIntDto(
                         transaction.Id,
                         transaction.InterestRate,
                         transaction.PrincipalAmount,
                         matchingInterestEMI != null ? matchingInterestEMI.InterestAmount : 0,
                         matchingInterestEMI != null ? matchingInterestEMI.PaidInterestAmount : 0,
                         matchingInterestEMI != null ? matchingInterestEMI.EmiMonth : string.Empty,
-                         matchingInterestEMI != null ? matchingInterestEMI.Id : (Guid?)null
+                         matchingInterestEMI != null ? matchingInterestEMI.Id : (Guid?)null,
+                         accountInfo?.AccountName ?? "Unknown"
                     ));
                 }
 
