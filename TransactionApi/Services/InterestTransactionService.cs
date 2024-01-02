@@ -155,7 +155,7 @@ namespace TransactionApi.Services
                 }
 
      
-                double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount + balanceInterestAmount, transaction.InterestRate);
+                double interestAmount = CalculateMonthlyInterest(transaction.BalanceAmount + balanceInterestAmount, transaction.InterestRate);
                 DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
               
 
@@ -190,6 +190,7 @@ namespace TransactionApi.Services
             }
         }
 
+        //generateInterest
         public async Task<List<InterestEMI>> GetInterestEMIForTransactionsAsync(string emiMonth)
         {
             var interestEMIs = new List<InterestEMI>();
@@ -212,7 +213,7 @@ namespace TransactionApi.Services
 
                     var existedInterestTransactions = await _interestTransactionRepository.GetAllAsync();
                     double balanceInterestAmount = existedInterestTransactions?.Sum(e => e.BalanceInterestAmount) ?? 0;
-                    double interestAmount = CalculateMonthlyInterest(transaction.PrincipalAmount + balanceInterestAmount, transaction.InterestRate);
+                    double interestAmount = CalculateMonthlyInterest(transaction.BalanceAmount + balanceInterestAmount, transaction.InterestRate);
                     DateOnly generatedDate = DateOnly.FromDateTime(DateTime.Now);
 
                     if (generatedDate < transaction.StartDate)
@@ -279,9 +280,30 @@ namespace TransactionApi.Services
             }
         }
 
+        //deleteFunctionality
+
+        public async Task<bool> DeleteInterestEMIAsync(Guid Id)
+        {
+            try
+            {
+                var interestEmi = await _interestTransactionRepository.GetByIdAsync(Id);
+                await _interestTransactionRepository.DeleteAsync(interestEmi);
+
+                return true;
+            }
+            catch (Exception)
+            {
+
+                throw;
+                return false;
+            }
 
 
-        private double CalculateMonthlyInterest(double principalAmount, double annualInterestRate)
+        }
+
+
+
+        private double CalculateMonthlyInterest(double BalanceAmount, double annualInterestRate)
         {
             // Convert annual interest rate to monthly interest rate
             double monthlyInterestRate = annualInterestRate / 12 / 100; // Assuming interest rate is in percentage
@@ -290,7 +312,7 @@ namespace TransactionApi.Services
             int numberOfMonths = 1;
 
             // Calculate interest using the formula: Interest = Principal * Rate * Time
-            double interestAmount = principalAmount * monthlyInterestRate * numberOfMonths;
+            double interestAmount = BalanceAmount * monthlyInterestRate * numberOfMonths;
             interestAmount = Math.Round(interestAmount, 2);
             return interestAmount;
         }

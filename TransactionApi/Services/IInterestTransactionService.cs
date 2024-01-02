@@ -13,5 +13,6 @@ namespace TransactionApi.Services
         Task<List<InterestEMI>> GetInterestEMIForTransactionsAsync(string emiMonth);
         Task<InterestEMI> UpdateInterestTransactionPaymentAsync(UpdateInterestEMIDto updateDto);
         Task<GetInterestEMIDto> GetInterestTransactionByIdAsync(Guid Id);
+        Task<bool> DeleteInterestEMIAsync(Guid Id);
     }
 }

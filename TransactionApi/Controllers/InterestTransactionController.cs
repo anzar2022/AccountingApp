@@ -132,6 +132,21 @@ namespace TransactionApi.Controllers
                 }
             }
 
+        [HttpDelete("DeleteInterestEMIAsync/{Id}")]
+        public async Task<ActionResult> DeleteInterestEMIAsync(Guid Id)
+        {
+            try
+            {
+                var accounts = await _interestTransactionService.DeleteInterestEMIAsync(Id);
+                return Ok(accounts);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
 
     }
 }

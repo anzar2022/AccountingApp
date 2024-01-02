@@ -178,6 +178,7 @@ namespace TransactionApi.Services
                         transaction.PrincipalAmount,
                         //interestEMI != null ? interestEMI.PaidInterestAmount : 0,
                         interestEMI != null ? interestEMI.InterestAmount : 0,
+                        interestEMI != null ? interestEMI.PaidInterestAmount : 0,
                         interestEMI != null ? interestEMI.EmiMonth : string.Empty
                         //paid amount pn pathav paidInterestAMount
                     );
