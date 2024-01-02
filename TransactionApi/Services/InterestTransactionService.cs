@@ -213,7 +213,7 @@ namespace TransactionApi.Services
                     {
                         continue;
                     }
-                    var accountInfo = _accountRepository.GetByIdAsync(transaction.Id);
+                    //var accountInfo = _accountRepository.GetByIdAsync(transaction.Id);
 
                     var existedInterestTransactions = await _interestTransactionRepository.GetAllAsync();
                     double balanceInterestAmount = existedInterestTransactions?.Sum(e => e.BalanceInterestAmount) ?? 0;
