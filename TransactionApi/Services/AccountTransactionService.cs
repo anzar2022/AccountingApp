@@ -179,8 +179,9 @@ namespace TransactionApi.Services
                         //interestEMI != null ? interestEMI.PaidInterestAmount : 0,
                         interestEMI != null ? interestEMI.InterestAmount : 0,
                         interestEMI != null ? interestEMI.PaidInterestAmount : 0,
-                        interestEMI != null ? interestEMI.EmiMonth : string.Empty
-                        //paid amount pn pathav paidInterestAMount
+                        interestEMI != null ? interestEMI.EmiMonth : string.Empty,
+                         interestEMI != null ? interestEMI.Id : (Guid?)null
+                    //paid amount pn pathav paidInterestAMount
                     );
 
                 return updatedAccountTransactions.ToList();
@@ -215,7 +216,8 @@ namespace TransactionApi.Services
                         transaction.PrincipalAmount,
                         matchingInterestEMI != null ? matchingInterestEMI.InterestAmount : 0,
                         matchingInterestEMI != null ? matchingInterestEMI.PaidInterestAmount : 0,
-                        matchingInterestEMI != null ? matchingInterestEMI.EmiMonth : string.Empty
+                        matchingInterestEMI != null ? matchingInterestEMI.EmiMonth : string.Empty,
+                         matchingInterestEMI != null ? matchingInterestEMI.Id : (Guid?)null
                     ));
                 }
 
